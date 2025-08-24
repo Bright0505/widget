@@ -13,11 +13,20 @@
     ],
     "UserPromptSubmit": [
       {
-        "matcher": "commit|提交|git commit",
+        "matcher": "(commit|提交|git commit)(?!.*不更新.*readme)(?!.*但不更新.*readme)(?!.*skip.*readme)",
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"💡 提醒：這次的變更完成後，記得更新 README.md 中的專案進度和功能描述\""
+            "command": "echo \"📝 自動提醒：請在提交時同時更新 README.md 記錄專案進度和功能變更\""
+          }
+        ]
+      },
+      {
+        "matcher": "(commit|提交|git commit).*(不更新.*readme|但不更新.*readme|skip.*readme)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"⚠️ 注意：根據指示，本次提交將跳過 README.md 更新\""
           }
         ]
       }
