@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>調酒計算器 | Widget 工具集</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 10px;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: #f1f3f4;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculator-mode {
+            display: none;
+        }
+
+        .calculator-mode.active {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .unit {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 15px 0;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .bac-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin: 12px 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #856404;
+            font-size: 0.9em;
+        }
+
+        .danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #721c24;
+            font-size: 0.9em;
+        }
+
+        .safe {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #155724;
+            font-size: 0.9em;
+        }
+
+        .note {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍸 調酒計算器</h1>
+        
+        <div class="mode-selector">
+            <button type="button" class="mode-btn active" onclick="switchMode('mixing')">調酒計算</button>
+            <button type="button" class="mode-btn" onclick="switchMode('bac')">血液濃度</button>
+        </div>
+
+        <!-- 調酒計算模式 -->
+        <div id="mixingMode" class="calculator-mode active">
+            <form id="mixingForm">
+                <div class="form-group">
+                    <label for="targetConcentration">目標酒精濃度</label>
+                    <input type="number" id="targetConcentration" step="0.1" min="0" max="100" required>
+                    <div class="unit">單位：百分比 (%) - 例如：9%</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="totalVolume">總液體量</label>
+                    <input type="number" id="totalVolume" step="0.1" min="0" required>
+                    <div class="unit">單位：毫升 (ml) - 例如：250ml</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="alcoholConcentration">使用酒精濃度</label>
+                    <input type="number" id="alcoholConcentration" step="0.1" min="0" max="100" value="40" required>
+                    <div class="unit">單位：百分比 (%) - 例如：40% 伏特加</div>
+                </div>
+
+                <button type="submit">🍸 計算需要多少酒精</button>
+            </form>
+
+            <div id="mixingResult" class="result">
+                <h3>🍹 調酒配方</h3>
+                <div id="mixingCalculation"></div>
+            </div>
+        </div>
+
+        <!-- 血液濃度計算模式 -->
+        <div id="bacMode" class="calculator-mode">
+            <form id="bacForm">
+                <div class="form-group">
+                    <label for="alcoholVolume">酒精飲料容量</label>
+                    <input type="number" id="alcoholVolume" step="0.1" min="0" required>
+                    <div class="unit">單位：毫升 (ml)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="alcoholPercentage">酒精濃度</label>
+                    <input type="number" id="alcoholPercentage" step="0.1" min="0" max="100" required>
+                    <div class="unit">單位：百分比 (%)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bodyWeight">體重</label>
+                    <input type="number" id="bodyWeight" step="0.1" min="0" required>
+                    <div class="unit">單位：公斤 (kg)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">性別</label>
+                    <select id="gender">
+                        <option value="male">男性</option>
+                        <option value="female">女性</option>
+                    </select>
+                </div>
+
+                <button type="submit">計算血液酒精濃度</button>
+            </form>
+
+            <div id="bacResult" class="result">
+                <h3>血液酒精濃度 (BAC)</h3>
+                <div class="bac-value" id="bacValue">0.00%</div>
+                <div id="statusMessage"></div>
+            </div>
+        </div>
+
+        <div class="note">
+            ⚠️ 此計算器僅供參考，實際酒精濃度受多種因素影響。請勿酒駕，珍愛生命。<br>
+            🔗 <a href="index.html" style="color: #667eea; text-decoration: none;">返回 Widget 工具集首頁</a>
+        </div>
+    </div>
+
+    <script>
+        // 模式切換
+        function switchMode(mode) {
+            // 更新按鈕狀態
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 更新顯示模式
+            document.querySelectorAll('.calculator-mode').forEach(div => div.classList.remove('active'));
+            if (mode === 'mixing') {
+                document.getElementById('mixingMode').classList.add('active');
+            } else {
+                document.getElementById('bacMode').classList.add('active');
+            }
+        }
+
+        // 調配計算表單事件
+        document.getElementById('mixingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateMixing();
+        });
+
+        // 血液濃度計算表單事件
+        document.getElementById('bacForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateBAC();
+        });
+
+        // 調酒計算功能
+        function calculateMixing() {
+            const targetConcentration = parseFloat(document.getElementById('targetConcentration').value);
+            const totalVolume = parseFloat(document.getElementById('totalVolume').value);
+            const alcoholConcentration = parseFloat(document.getElementById('alcoholConcentration').value);
+
+            if (isNaN(targetConcentration) || isNaN(totalVolume) || isNaN(alcoholConcentration)) {
+                alert('請填寫所有必要欄位');
+                return;
+            }
+
+            if (targetConcentration > alcoholConcentration) {
+                alert('目標濃度不能高於使用的酒精濃度');
+                return;
+            }
+
+            if (targetConcentration <= 0) {
+                alert('目標濃度必須大於 0');
+                return;
+            }
+
+            if (totalVolume <= 0) {
+                alert('總液體量必須大於 0');
+                return;
+            }
+
+            // 計算需要的酒精容量
+            // 公式：酒精容量 = (目標濃度 × 總容量) ÷ 酒精濃度
+            const alcoholVolumeRaw = (targetConcentration * totalVolume) / alcoholConcentration;
+            
+            // 智能四捨五入 - 優先顯示以 0 或 5 結尾的整數
+            function smartRound(value) {
+                const rounded = Math.round(value);
+                const rounded5 = Math.round(value / 5) * 5;
+                const rounded10 = Math.round(value / 10) * 10;
+                
+                // 如果原值和10的倍數差距在5%以內，優先顯示10的倍數
+                if (Math.abs(value - rounded10) / value <= 0.05) {
+                    return rounded10;
+                }
+                // 如果原值和5的倍數差距在3%以內，顯示5的倍數
+                else if (Math.abs(value - rounded5) / value <= 0.03) {
+                    return rounded5;
+                }
+                // 否則顯示四捨五入的整數
+                else {
+                    return rounded;
+                }
+            }
+            
+            const alcoholVolume = smartRound(alcoholVolumeRaw);
+            const nonAlcoholVolume = totalVolume - alcoholVolume;
+
+            // 驗證結果
+            if (alcoholVolume > totalVolume) {
+                alert('無法達成目標濃度，酒精用量超過總容量');
+                return;
+            }
+
+            if (alcoholVolume < 0 || nonAlcoholVolume < 0) {
+                alert('計算結果無效，請檢查輸入數值');
+                return;
+            }
+
+            // 計算實際達成的濃度（基於調整後的酒精用量）
+            const actualConcentration = (alcoholVolume * alcoholConcentration) / totalVolume;
+
+            // 顯示結果
+            const resultDiv = document.getElementById('mixingCalculation');
+            resultDiv.innerHTML = `
+                <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); padding: 20px; border-radius: 15px; margin: 15px 0; color: white;">
+                    <h4 style="color: white; margin-bottom: 20px; text-align: center;">🍹 完美調酒配方</h4>
+                    
+                    <!-- 主要結果 - 酒精用量 -->
+                    <div style="background: rgba(255,255,255,0.95); padding: 25px; border-radius: 12px; margin-bottom: 20px; color: #333;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2em; color: #666; margin-bottom: 8px;">🥃 需要酒精 (${alcoholConcentration}%)</div>
+                            <div style="font-size: 3em; font-weight: 700; color: #ff6b6b; margin: 10px 0;">${alcoholVolume} ml</div>
+                            <div style="color: #888; font-size: 0.9em;">約 ${((alcoholVolume / totalVolume) * 100).toFixed(0)}% 比例</div>
+                            ${Math.abs(alcoholVolumeRaw - alcoholVolume) > 0.5 ? 
+                                `<div style="background: #fff3cd; padding: 8px; border-radius: 6px; margin-top: 10px; color: #856404; font-size: 0.85em;">
+                                    💡 為便於測量已調整為 ${alcoholVolume}ml (原計算值: ${alcoholVolumeRaw.toFixed(1)}ml)
+                                </div>` : ''
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 詳細配方 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
+                            <div style="font-size: 1.5em; margin-bottom: 8px;">🍺</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">酒精 (${alcoholConcentration}%)</div>
+                            <div style="font-size: 1.4em; font-weight: 700; color: #ff6b6b;">${alcoholVolume} ml</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
+                            <div style="font-size: 1.5em; margin-bottom: 8px;">🧊</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">其他液體</div>
+                            <div style="font-size: 1.4em; font-weight: 700; color: #42a5f5;">${nonAlcoholVolume} ml</div>
+                        </div>
+                    </div>
+
+                    <!-- 最終結果卡片 -->
+                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; text-align: center; color: #333;">
+                        <div style="font-size: 1.1em; color: #666; margin-bottom: 8px;">🎯 調酒結果</div>
+                        <div style="font-weight: 700; font-size: 1.3em; color: #333;">
+                            總容量: ${totalVolume} ml | 實際濃度: ${actualConcentration.toFixed(1)}%
+                            ${Math.abs(actualConcentration - targetConcentration) > 0.1 ? 
+                                ` (目標: ${targetConcentration}%)` : ''
+                            }
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; color: #666; font-size: 0.9em;">
+                            純酒精含量: ${(alcoholVolume * alcoholConcentration / 100).toFixed(0)} ml
+                        </div>
+                    </div>
+
+                    <!-- 調酒提示 -->
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #4caf50;">
+                        <div style="font-size: 0.95em; color: white; line-height: 1.4;">
+                            🍸 <strong>調酒技巧：</strong><br>
+                            1. 先加入 ${alcoholVolume}ml 的 ${alcoholConcentration}% 酒精<br>
+                            2. 再加入 ${nonAlcoholVolume}ml 的果汁、汽水或其他調料<br>
+                            3. 攪拌均勻，享受 ${actualConcentration.toFixed(1)}% 的完美調酒！
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mixingResult').classList.add('show');
+        }
+
+        // 血液濃度計算功能
+        function calculateBAC() {
+            const alcoholVolume = parseFloat(document.getElementById('alcoholVolume').value);
+            const alcoholPercentage = parseFloat(document.getElementById('alcoholPercentage').value);
+            const bodyWeight = parseFloat(document.getElementById('bodyWeight').value);
+            const gender = document.getElementById('gender').value;
+
+            if (!alcoholVolume || !alcoholPercentage || !bodyWeight) {
+                alert('請填寫所有必要欄位');
+                return;
+            }
+
+            // 計算純酒精重量 (克)
+            const pureAlcoholWeight = (alcoholVolume * alcoholPercentage / 100) * 0.789;
+
+            // 水分分布係數 (Widmark coefficient)
+            const widmarkCoefficient = gender === 'male' ? 0.68 : 0.55;
+
+            // 計算 BAC (血液酒精濃度)
+            const bac = (pureAlcoholWeight / (bodyWeight * widmarkCoefficient)) * 100;
+
+            // 顯示結果
+            document.getElementById('bacValue').textContent = bac.toFixed(3) + '%';
+            
+            const statusMessage = document.getElementById('statusMessage');
+            let messageClass = '';
+            let message = '';
+
+            if (bac < 0.05) {
+                messageClass = 'safe';
+                message = '✅ 血液酒精濃度較低，但仍建議避免駕駛';
+            } else if (bac < 0.08) {
+                messageClass = 'warning';
+                message = '⚠️ 已達法律禁止駕駛標準 (0.05%)，絕對不可駕駛';
+            } else if (bac < 0.25) {
+                messageClass = 'danger';
+                message = '🚨 血液酒精濃度過高，可能出現嚴重醉酒症狀';
+            } else {
+                messageClass = 'danger';
+                message = '🆘 血液酒精濃度極高，有生命危險，請立即就醫';
+            }
+
+            statusMessage.className = messageClass;
+            statusMessage.textContent = message;
+
+            document.getElementById('bacResult').classList.add('show');
+        }
+
+        // 添加輸入驗證
+        document.getElementById('alcoholPercentage').addEventListener('input', function() {
+            if (this.value > 100) this.value = 100;
+        });
+
+        document.getElementById('targetConcentration').addEventListener('input', function() {
+            if (this.value > 100) this.value = 100;
+        });
+
+        document.getElementById('alcoholConcentration').addEventListener('input', function() {
+            if (this.value > 100) this.value = 100;
+        });
+    </script>
+</body>
+</html>

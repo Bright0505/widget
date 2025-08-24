@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget 工具集 | 實用小工具合集</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .widget-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .widget-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .widget-card:active {
+            transform: scale(0.98);
+        }
+
+        .widget-icon {
+            font-size: 2.5em;
+            flex-shrink: 0;
+        }
+
+        .widget-content {
+            flex: 1;
+        }
+
+        .widget-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .widget-description {
+            font-size: 0.9em;
+            line-height: 1.3;
+            opacity: 0.9;
+        }
+
+        .coming-soon {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 0.8em;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            line-height: 1.5;
+        }
+
+        .github-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Widget 工具集</h1>
+        <div class="subtitle">實用小工具合集，讓生活更便利</div>
+        
+        <div class="widget-grid">
+            <!-- 調酒計算器 -->
+            <a href="cocktail-calculator.html" class="widget-card">
+                <span class="widget-icon">🍸</span>
+                <div class="widget-content">
+                    <div class="widget-title">調酒計算器</div>
+                    <div class="widget-description">
+                        精確計算調酒所需的酒精用量
+                    </div>
+                </div>
+            </a>
+
+            <!-- 比價計算器 -->
+            <a href="price-calculator.html" class="widget-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <span class="widget-icon">🛒</span>
+                <div class="widget-content">
+                    <div class="widget-title">比價計算器</div>
+                    <div class="widget-description">
+                        比較不同產品的單位價格
+                    </div>
+                </div>
+            </a>
+
+            <!-- 時間計算器 -->
+            <a href="time-calculator.html" class="widget-card" style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);">
+                <span class="widget-icon">⏰</span>
+                <div class="widget-content">
+                    <div class="widget-title">時間計算器</div>
+                    <div class="widget-description">
+                        時間差計算、工時統計、倒數計時
+                    </div>
+                </div>
+            </a>
+
+            <div class="widget-card coming-soon">
+                <span class="widget-icon">💰</span>
+                <div class="widget-content">
+                    <div class="widget-title">匯率計算器</div>
+                    <div class="widget-description">
+                        <em>即將推出...</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>✨ 持續更新中，更多實用工具敬請期待</p>
+            <p>🚀 部署於 GitHub Pages | <a href="https://github.com" class="github-link">查看源碼</a></p>
+        </div>
+    </div>
+</body>
+</html>

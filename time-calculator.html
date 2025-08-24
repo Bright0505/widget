@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間計算器 | Widget 工具集</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 10px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #f1f3f4;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #17a2b8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculator-mode {
+            display: none;
+        }
+
+        .calculator-mode.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="date"], input[type="time"], input[type="datetime-local"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #17a2b8;
+        }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 15px 0 10px 0;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .now-btn {
+            background: #28a745;
+            padding: 8px 12px;
+            font-size: 0.8em;
+            margin: 5px 0;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #17a2b8;
+            text-align: center;
+            margin: 12px 0;
+            line-height: 1.4;
+        }
+
+        .countdown-display {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .countdown-time {
+            font-size: 2em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .countdown-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .timezone-result {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .timezone-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timezone-item:last-child {
+            border-bottom: none;
+        }
+
+        .timezone-city {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .timezone-time {
+            font-size: 1.1em;
+            color: #17a2b8;
+            font-weight: 700;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .quick-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-btn:active {
+            background: #5a6268;
+            transform: scale(0.98);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .back-link a {
+            color: #17a2b8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .unit {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ 時間計算器</h1>
+            <div class="subtitle">時間差計算、工時統計、倒數計時、時區轉換</div>
+        </div>
+
+        <div class="main-content">
+            <!-- 模式選擇 -->
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" onclick="switchMode('diff')">時間差</button>
+                <button type="button" class="mode-btn" onclick="switchMode('work')">工時</button>
+                <button type="button" class="mode-btn" onclick="switchMode('countdown')">倒數</button>
+                <button type="button" class="mode-btn" onclick="switchMode('timezone')">時區</button>
+            </div>
+
+            <!-- 時間差計算 -->
+            <div id="diffMode" class="calculator-mode active">
+                <form id="diffForm">
+                    <div class="form-group">
+                        <label for="startDateTime">開始時間</label>
+                        <input type="datetime-local" id="startDateTime" required>
+                        <button type="button" class="now-btn" onclick="setCurrentTime('startDateTime')">現在</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDateTime">結束時間</label>
+                        <input type="datetime-local" id="endDateTime" required>
+                        <button type="button" class="now-btn" onclick="setCurrentTime('endDateTime')">現在</button>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button type="button" class="quick-btn" onclick="setQuickDiff(1, 'years')">1年後</button>
+                        <button type="button" class="quick-btn" onclick="setQuickDiff(1, 'months')">1月後</button>
+                        <button type="button" class="quick-btn" onclick="setQuickDiff(7, 'days')">1週後</button>
+                        <button type="button" class="quick-btn" onclick="setQuickDiff(1, 'days')">1天後</button>
+                    </div>
+
+                    <button type="submit">計算時間差</button>
+                </form>
+
+                <div id="diffResult" class="result">
+                    <h3>⏱️ 時間差結果</h3>
+                    <div class="result-value" id="diffValue"></div>
+                </div>
+            </div>
+
+            <!-- 工時計算 -->
+            <div id="workMode" class="calculator-mode">
+                <form id="workForm">
+                    <div class="form-group">
+                        <label for="workDate">工作日期</label>
+                        <input type="date" id="workDate" required>
+                        <button type="button" class="now-btn" onclick="setToday('workDate')">今天</button>
+                    </div>
+
+                    <div class="time-row">
+                        <div class="form-group">
+                            <label for="startTime">上班時間</label>
+                            <input type="time" id="startTime" value="09:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">下班時間</label>
+                            <input type="time" id="endTime" value="18:00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="breakMinutes">休息時間</label>
+                        <select id="breakMinutes">
+                            <option value="0">無</option>
+                            <option value="30">30分鐘</option>
+                            <option value="60" selected>1小時</option>
+                            <option value="90">1.5小時</option>
+                            <option value="120">2小時</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">計算工時</button>
+                </form>
+
+                <div id="workResult" class="result">
+                    <h3>💼 工時結果</h3>
+                    <div class="result-value" id="workValue"></div>
+                </div>
+            </div>
+
+            <!-- 倒數計時 -->
+            <div id="countdownMode" class="calculator-mode">
+                <form id="countdownForm">
+                    <div class="form-group">
+                        <label for="targetDateTime">目標時間</label>
+                        <input type="datetime-local" id="targetDateTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="countdownLabel">倒數名稱</label>
+                        <input type="text" id="countdownLabel" placeholder="例如：考試、生日、專案截止" maxlength="20">
+                        <div class="unit">選填，最多20字</div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button type="button" class="quick-btn" onclick="setQuickTarget('新年', getNextNewYear())">新年</button>
+                        <button type="button" class="quick-btn" onclick="setQuickTarget('春節', getNextSpringFestival())">春節</button>
+                        <button type="button" class="quick-btn" onclick="setQuickTarget('中秋', getNextMidAutumn())">中秋</button>
+                        <button type="button" class="quick-btn" onclick="setCustomTarget()">自定義</button>
+                    </div>
+
+                    <button type="submit">開始倒數</button>
+                </form>
+
+                <div id="countdownResult" class="result">
+                    <div id="countdownDisplay"></div>
+                </div>
+            </div>
+
+            <!-- 時區轉換 -->
+            <div id="timezoneMode" class="calculator-mode">
+                <form id="timezoneForm">
+                    <div class="form-group">
+                        <label for="sourceTime">指定時間</label>
+                        <input type="datetime-local" id="sourceTime" required>
+                        <button type="button" class="now-btn" onclick="setCurrentTime('sourceTime')">現在</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sourceTimezone">來源時區</label>
+                        <select id="sourceTimezone">
+                            <option value="Asia/Taipei" selected>台北 (GMT+8)</option>
+                            <option value="Asia/Tokyo">東京 (GMT+9)</option>
+                            <option value="Asia/Shanghai">上海 (GMT+8)</option>
+                            <option value="Asia/Hong_Kong">香港 (GMT+8)</option>
+                            <option value="Asia/Singapore">新加坡 (GMT+8)</option>
+                            <option value="America/New_York">紐約 (GMT-5/-4)</option>
+                            <option value="America/Los_Angeles">洛杉磯 (GMT-8/-7)</option>
+                            <option value="Europe/London">倫敦 (GMT+0/+1)</option>
+                            <option value="Europe/Paris">巴黎 (GMT+1/+2)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">轉換時區</button>
+                </form>
+
+                <div id="timezoneResult" class="result">
+                    <h3>🌍 世界時區</h3>
+                    <div id="timezoneDisplay"></div>
+                </div>
+            </div>
+
+            <div class="back-link">
+                🔗 <a href="index.html">返回 Widget 工具集首頁</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let countdownInterval = null;
+
+        // 模式切換
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.calculator-mode').forEach(div => div.classList.remove('active'));
+            document.getElementById(mode + 'Mode').classList.add('active');
+
+            // 停止倒數計時
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        // 設置當前時間
+        function setCurrentTime(elementId) {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+            document.getElementById(elementId).value = localDateTime;
+        }
+
+        // 設置今天日期
+        function setToday(elementId) {
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById(elementId).value = today;
+        }
+
+        // 快速設定時間差
+        function setQuickDiff(amount, unit) {
+            const now = new Date();
+            const future = new Date(now);
+            
+            switch(unit) {
+                case 'years':
+                    future.setFullYear(future.getFullYear() + amount);
+                    break;
+                case 'months':
+                    future.setMonth(future.getMonth() + amount);
+                    break;
+                case 'days':
+                    future.setDate(future.getDate() + amount);
+                    break;
+            }
+
+            const nowLocal = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+            const futureLocal = new Date(future.getTime() - future.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+
+            document.getElementById('startDateTime').value = nowLocal;
+            document.getElementById('endDateTime').value = futureLocal;
+        }
+
+        // 表單事件綁定
+        document.getElementById('diffForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateTimeDiff();
+        });
+
+        document.getElementById('workForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateWorkHours();
+        });
+
+        document.getElementById('countdownForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            startCountdown();
+        });
+
+        document.getElementById('timezoneForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            convertTimezone();
+        });
+
+        // 時間差計算
+        function calculateTimeDiff() {
+            const start = new Date(document.getElementById('startDateTime').value);
+            const end = new Date(document.getElementById('endDateTime').value);
+
+            if (start >= end) {
+                alert('結束時間必須晚於開始時間');
+                return;
+            }
+
+            const diff = end.getTime() - start.getTime();
+            const result = formatTimeDifference(diff);
+
+            document.getElementById('diffValue').innerHTML = result;
+            document.getElementById('diffResult').classList.add('show');
+        }
+
+        // 工時計算
+        function calculateWorkHours() {
+            const date = document.getElementById('workDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const breakMinutes = parseInt(document.getElementById('breakMinutes').value);
+
+            const start = new Date(date + 'T' + startTime);
+            const end = new Date(date + 'T' + endTime);
+
+            if (start >= end) {
+                alert('下班時間必須晚於上班時間');
+                return;
+            }
+
+            const workMs = end.getTime() - start.getTime();
+            const workMinutes = Math.floor(workMs / (1000 * 60)) - breakMinutes;
+            const workHours = (workMinutes / 60).toFixed(1);
+
+            const overtime = workMinutes > 8 * 60 ? ((workMinutes - 8 * 60) / 60).toFixed(1) : 0;
+
+            let result = `<div style="text-align: center;">
+                <div style="font-size: 1.2em; margin-bottom: 8px;">總工時: <strong>${workHours} 小時</strong></div>
+                <div style="color: #666; font-size: 0.9em;">
+                    工作: ${Math.floor(workMinutes/60)}小時${workMinutes%60}分鐘<br>
+                    休息: ${breakMinutes}分鐘
+                </div>`;
+            
+            if (overtime > 0) {
+                result += `<div style="color: #ff6b6b; margin-top: 8px; font-weight: 600;">
+                    加班: ${overtime} 小時
+                </div>`;
+            }
+            
+            result += '</div>';
+
+            document.getElementById('workValue').innerHTML = result;
+            document.getElementById('workResult').classList.add('show');
+        }
+
+        // 倒數計時
+        function startCountdown() {
+            const target = new Date(document.getElementById('targetDateTime').value);
+            const label = document.getElementById('countdownLabel').value || '目標時間';
+
+            if (target <= new Date()) {
+                alert('目標時間必須是未來時間');
+                return;
+            }
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            updateCountdown(target, label);
+            countdownInterval = setInterval(() => updateCountdown(target, label), 1000);
+            document.getElementById('countdownResult').classList.add('show');
+        }
+
+        // 更新倒數顯示
+        function updateCountdown(target, label) {
+            const now = new Date();
+            const diff = target.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdownDisplay').innerHTML = `
+                    <div class="countdown-display">
+                        <div class="countdown-label">${label}</div>
+                        <div class="countdown-time">🎉 時間到！</div>
+                    </div>`;
+                return;
+            }
+
+            const result = formatTimeDifference(diff);
+            document.getElementById('countdownDisplay').innerHTML = `
+                <div class="countdown-display">
+                    <div class="countdown-label">距離 ${label} 還有</div>
+                    <div class="countdown-time">${result}</div>
+                </div>`;
+        }
+
+        // 時區轉換
+        function convertTimezone() {
+            const sourceTime = new Date(document.getElementById('sourceTime').value);
+            const sourceZone = document.getElementById('sourceTimezone').value;
+
+            const timezones = [
+                { zone: 'Asia/Taipei', name: '台北' },
+                { zone: 'Asia/Tokyo', name: '東京' },
+                { zone: 'Asia/Shanghai', name: '上海' },
+                { zone: 'Asia/Hong_Kong', name: '香港' },
+                { zone: 'America/New_York', name: '紐約' },
+                { zone: 'America/Los_Angeles', name: '洛杉磯' },
+                { zone: 'Europe/London', name: '倫敦' },
+                { zone: 'Europe/Paris', name: '巴黎' }
+            ];
+
+            let html = '';
+            timezones.forEach(tz => {
+                try {
+                    const time = new Intl.DateTimeFormat('zh-TW', {
+                        timeZone: tz.zone,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }).format(sourceTime);
+
+                    html += `
+                        <div class="timezone-item">
+                            <span class="timezone-city">${tz.name}</span>
+                            <span class="timezone-time">${time}</span>
+                        </div>`;
+                } catch (e) {
+                    html += `
+                        <div class="timezone-item">
+                            <span class="timezone-city">${tz.name}</span>
+                            <span class="timezone-time">計算錯誤</span>
+                        </div>`;
+                }
+            });
+
+            document.getElementById('timezoneDisplay').innerHTML = html;
+            document.getElementById('timezoneResult').classList.add('show');
+        }
+
+        // 格式化時間差
+        function formatTimeDifference(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            const years = Math.floor(days / 365);
+            const months = Math.floor((days % 365) / 30);
+
+            let result = '';
+            if (years > 0) result += `${years}年 `;
+            if (months > 0) result += `${months}月 `;
+            if (days % 30 > 0) result += `${days % 30}天 `;
+            if (hours % 24 > 0) result += `${hours % 24}小時 `;
+            if (minutes % 60 > 0) result += `${minutes % 60}分鐘`;
+
+            return result || '不到1分鐘';
+        }
+
+        // 快速目標設定（簡化版）
+        function setQuickTarget(name, date) {
+            const localDateTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+            document.getElementById('targetDateTime').value = localDateTime;
+            document.getElementById('countdownLabel').value = name;
+        }
+
+        function getNextNewYear() {
+            const next = new Date();
+            next.setFullYear(next.getFullYear() + 1, 0, 1);
+            next.setHours(0, 0, 0, 0);
+            return next;
+        }
+
+        function getNextSpringFestival() {
+            const next = new Date();
+            next.setFullYear(next.getFullYear() + 1, 1, 10); // 簡化為2月10日
+            next.setHours(0, 0, 0, 0);
+            return next;
+        }
+
+        function getNextMidAutumn() {
+            const next = new Date();
+            const year = next.getMonth() >= 8 ? next.getFullYear() + 1 : next.getFullYear();
+            next.setFullYear(year, 8, 15); // 簡化為9月15日
+            next.setHours(0, 0, 0, 0);
+            return next;
+        }
+
+        function setCustomTarget() {
+            // 設置一週後作為範例
+            const future = new Date();
+            future.setDate(future.getDate() + 7);
+            const localDateTime = new Date(future.getTime() - future.getTimezoneOffset() * 60000)
+                .toISOString().slice(0, 16);
+            document.getElementById('targetDateTime').value = localDateTime;
+            document.getElementById('countdownLabel').value = '';
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentTime('startDateTime');
+            setToday('workDate');
+            setCurrentTime('sourceTime');
+        });
+    </script>
+</body>
+</html>

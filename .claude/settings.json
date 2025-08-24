@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat README.md"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "commit|提交|git commit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"💡 提醒：這次的變更完成後，記得更新 README.md 中的專案進度和功能描述\""
+          }
+        ]
+      }
+    ]
+  }
+}

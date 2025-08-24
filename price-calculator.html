@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比價計算器 | Widget 工具集</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 10px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .add-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .add-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        input[type="text"], input[type="number"], select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .add-btn:active {
+            transform: scale(0.98);
+        }
+
+        .comparison-section {
+            margin-top: 20px;
+        }
+
+        .comparison-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .products-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card.best-deal {
+            border-color: #4caf50;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        .product-card.best-deal::before {
+            content: '👑 最划算';
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .product-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            font-size: 1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .unit-price {
+            text-align: center;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .unit-price-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .unit-price-value {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .delete-btn {
+            width: 100%;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:active {
+            background: #c82333;
+            transform: scale(0.98);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state .emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 0.9em;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 比價計算器</h1>
+            <div class="subtitle">比較不同產品的單位價格，找出最划算的選擇</div>
+        </div>
+
+        <div class="main-content">
+            <!-- 新增產品區域 -->
+            <div class="add-section">
+                <h2>➕ 新增產品</h2>
+                <form id="productForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">產品名稱</label>
+                            <input type="text" id="productName" placeholder="例如：好市多牛奶" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">售價</label>
+                            <input type="number" id="price" step="0.01" min="0" placeholder="89" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">數量</label>
+                            <input type="number" id="quantity" step="0.01" min="0" placeholder="1000" required>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label for="unitType">單位類型</label>
+                                <select id="unitType" required onchange="updateUnitOptions()">
+                                    <option value="">選擇類型</option>
+                                    <option value="volume">🧊 容量</option>
+                                    <option value="weight">⚖️ 重量</option>
+                                    <option value="package">📦 包裝</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="unit">單位</label>
+                                <select id="unit" required disabled>
+                                    <option value="">請先選擇類型</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="add-btn">新增產品</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 比較結果區域 -->
+            <div class="comparison-section">
+                <h2>📊 產品比較</h2>
+                <div id="productsContainer" class="products-grid">
+                    <div class="empty-state">
+                        <span class="emoji">🛍️</span>
+                        <h3>還沒有產品</h3>
+                        <p>新增一些產品來開始比價吧！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="back-link">
+                🔗 <a href="index.html">返回 Widget 工具集首頁</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = [];
+        let nextId = 1;
+
+        // 單位選項定義
+        const unitOptions = {
+            volume: {
+                'ml': '毫升 (ml)',
+                'l': '公升 (L)',
+                'fl oz': '液體盎司 (fl oz)'
+            },
+            weight: {
+                'g': '公克 (g)',
+                'kg': '公斤 (kg)',
+                '台斤': '台斤',
+                '市斤': '市斤',
+                '磅': '磅 (lb)'
+            },
+            package: {
+                '包': '包',
+                '瓶': '瓶',
+                '罐': '罐',
+                '片': '片',
+                '張': '張',
+                '條': '條'
+            }
+        };
+
+        // 單位換算表（轉換為標準單位）
+        const unitConversions = {
+            // 容量（轉換為 ml）
+            'ml': 1,
+            'l': 1000,
+            'fl oz': 29.5735,  // 1液體盎司 = 29.5735毫升
+            
+            // 重量（轉換為 g）
+            'g': 1,
+            'kg': 1000,
+            '台斤': 600,      // 1台斤 = 600公克
+            '市斤': 500,      // 1市斤 = 500公克
+            '磅': 453.592,    // 1磅 = 453.592公克
+            
+            // 包裝單位（無法換算，直接比較）
+            '包': 1,
+            '瓶': 1,
+            '罐': 1,
+            '片': 1,
+            '張': 1,
+            '條': 1
+        };
+
+        // 單位類型分組
+        const unitTypes = {
+            'volume': ['ml', 'l', 'fl oz'],
+            'weight': ['g', 'kg', '台斤', '市斤', '磅'],
+            'package': ['包', '瓶', '罐', '片', '張', '條']
+        };
+
+        // 獲取單位類型
+        function getUnitType(unit) {
+            for (const [type, units] of Object.entries(unitTypes)) {
+                if (units.includes(unit)) return type;
+            }
+            return 'package';
+        }
+
+        // 獲取標準單位
+        function getStandardUnit(unit) {
+            const type = getUnitType(unit);
+            if (type === 'volume') return 'ml';
+            if (type === 'weight') return 'g';
+            return unit; // 包裝單位保持原樣
+        }
+
+        // 更新單位選項
+        function updateUnitOptions() {
+            const unitTypeSelect = document.getElementById('unitType');
+            const unitSelect = document.getElementById('unit');
+            const selectedType = unitTypeSelect.value;
+
+            // 清空單位選項
+            unitSelect.innerHTML = '<option value="">請選擇單位</option>';
+            
+            if (selectedType && unitOptions[selectedType]) {
+                // 啟用單位選擇
+                unitSelect.disabled = false;
+                
+                // 添加對應類型的單位選項
+                for (const [value, label] of Object.entries(unitOptions[selectedType])) {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = label;
+                    unitSelect.appendChild(option);
+                }
+            } else {
+                // 禁用單位選擇
+                unitSelect.disabled = true;
+                unitSelect.innerHTML = '<option value="">請先選擇類型</option>';
+            }
+        }
+
+        // 表單提交事件
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            addProduct();
+        });
+
+        // 新增產品
+        function addProduct() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const quantity = parseFloat(document.getElementById('quantity').value);
+            const unitType = document.getElementById('unitType').value;
+            const unit = document.getElementById('unit').value;
+
+            if (!name || !price || !quantity || !unitType || !unit) {
+                alert('請填寫所有必要欄位');
+                return;
+            }
+
+            if (price <= 0 || quantity <= 0) {
+                alert('售價和數量必須大於 0');
+                return;
+            }
+
+            // 轉換為標準單位進行比較
+            const standardQuantity = quantity * unitConversions[unit];
+            const standardUnit = getStandardUnit(unit);
+            
+            const product = {
+                id: nextId++,
+                name: name,
+                price: price,
+                quantity: quantity,
+                unit: unit,
+                unitPrice: price / quantity,
+                standardQuantity: standardQuantity,
+                standardUnit: standardUnit,
+                standardUnitPrice: price / standardQuantity,
+                unitType: getUnitType(unit)
+            };
+
+            products.push(product);
+            updateDisplay();
+            clearForm();
+        }
+
+        // 刪除產品
+        function deleteProduct(id) {
+            products = products.filter(product => product.id !== id);
+            updateDisplay();
+        }
+
+        // 更新顯示
+        function updateDisplay() {
+            const container = document.getElementById('productsContainer');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span class="emoji">🛍️</span>
+                        <h3>還沒有產品</h3>
+                        <p>新增一些產品來開始比價吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 按單位類型分組比較
+            const groupedProducts = groupProductsByType(products);
+            let html = '';
+
+            for (const [type, typeProducts] of Object.entries(groupedProducts)) {
+                if (typeProducts.length === 0) continue;
+
+                // 找出該類型中最划算的產品
+                const bestDeal = typeProducts.reduce((best, current) => {
+                    if (type === 'package') {
+                        return current.unitPrice < best.unitPrice ? current : best;
+                    } else {
+                        return current.standardUnitPrice < best.standardUnitPrice ? current : best;
+                    }
+                });
+
+                const typeTitle = getTypeTitle(type);
+                html += `<div style="margin-bottom: 20px;"><h3 style="color: #666; font-size: 1.1em; margin-bottom: 12px; padding-left: 5px;">${typeTitle}</h3>`;
+
+                html += typeProducts.map(product => `
+                    <div class="product-card ${product.id === bestDeal.id ? 'best-deal' : ''}">
+                        <div class="product-name">${product.name}</div>
+                        
+                        <div class="product-details">
+                            <div class="detail-item">
+                                <div class="detail-label">售價</div>
+                                <div class="detail-value">$${product.price.toFixed(0)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">容量/數量</div>
+                                <div class="detail-value">${formatQuantity(product.quantity)} ${product.unit}</div>
+                            </div>
+                        </div>
+
+                        <div class="unit-price">
+                            <div class="unit-price-label">單價</div>
+                            <div class="unit-price-value">$${product.unitPrice.toFixed(2)} / ${product.unit}</div>
+                            ${type !== 'package' && product.unit !== product.standardUnit ? 
+                                `<div style="font-size: 0.75em; opacity: 0.8; margin-top: 3px;">
+                                    ($${product.standardUnitPrice.toFixed(3)} / ${product.standardUnit})
+                                </div>` : ''
+                            }
+                        </div>
+
+                        <button class="delete-btn" onclick="deleteProduct(${product.id})">
+                            🗑️ 刪除
+                        </button>
+                    </div>
+                `).join('');
+                
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 按類型分組產品
+        function groupProductsByType(products) {
+            const groups = {
+                volume: [],
+                weight: [],
+                package: []
+            };
+
+            products.forEach(product => {
+                groups[product.unitType].push(product);
+            });
+
+            return groups;
+        }
+
+        // 獲取類型標題
+        function getTypeTitle(type) {
+            const titles = {
+                volume: '🧊 容量類商品',
+                weight: '⚖️ 重量類商品',
+                package: '📦 包裝類商品'
+            };
+            return titles[type] || '其他商品';
+        }
+
+
+        // 格式化數量顯示
+        function formatQuantity(quantity) {
+            if (quantity >= 1000 && quantity % 1000 === 0) {
+                return (quantity / 1000).toString() + 'K';
+            }
+            return quantity % 1 === 0 ? quantity.toString() : quantity.toFixed(2);
+        }
+
+        // 清空表單
+        function clearForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('unitType').value = '';
+            document.getElementById('unit').value = '';
+            document.getElementById('unit').disabled = true;
+            document.getElementById('unit').innerHTML = '<option value="">請先選擇類型</option>';
+        }
+
+        // 輸入驗證
+        document.getElementById('price').addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+        });
+
+        document.getElementById('quantity').addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+        });
+    </script>
+</body>
+</html>
