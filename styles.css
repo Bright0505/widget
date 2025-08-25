@@ -49,15 +49,15 @@ h1 {
     text-align: center;
     color: #333;
     margin-bottom: 8px;
-    font-size: 3.3em;
+    font-size: 2rem;
     font-weight: 700;
 }
 
 .subtitle {
     text-align: center;
     color: #666;
-    margin-bottom: 25px;
-    font-size: 1.5em;
+    margin-bottom: 16px;
+    font-size: 1rem;
     line-height: 1.4;
 }
 
@@ -71,7 +71,7 @@ label {
     margin-bottom: 6px;
     color: #555;
     font-weight: 600;
-    font-size: 1.5em;
+    font-size: 1rem;
 }
 
 input[type="number"],
@@ -81,10 +81,10 @@ input[type="time"],
 input[type="datetime-local"],
 select {
     width: 100%;
-    padding: 18px;
+    padding: 16px;
     border: 2px solid #e1e5e9;
     border-radius: 8px;
-    font-size: 1.65em;
+    font-size: 1.125rem;
     transition: border-color 0.3s ease;
 }
 
@@ -95,7 +95,7 @@ select:focus {
 }
 
 .unit {
-    font-size: 1.28em;
+    font-size: 0.875rem;
     color: #888;
     margin-top: 4px;
 }
@@ -103,16 +103,16 @@ select:focus {
 /* === 按鈕樣式 === */
 button {
     width: 100%;
-    padding: 21px;
+    padding: 16px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1.65em;
+    font-size: 1.125rem;
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.2s ease;
-    margin: 15px 0;
+    margin: 16px 0;
 }
 
 button:active {
@@ -123,14 +123,14 @@ button:active {
 .add-btn {
     background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
     margin-top: 8px;
-    padding: 21px;
-    font-size: 1.65em;
+    padding: 16px;
+    font-size: 1.125rem;
 }
 
 .delete-btn {
     background: #dc3545;
-    padding: 15px;
-    font-size: 1.35em;
+    padding: 12px;
+    font-size: 0.875rem;
     margin: 0;
 }
 
@@ -140,9 +140,9 @@ button:active {
 
 .now-btn {
     background: #28a745;
-    padding: 12px 18px;
-    font-size: 1.2em;
-    margin: 5px 0;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    margin: 4px 0;
 }
 
 .quick-btn {
@@ -150,8 +150,8 @@ button:active {
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 12px;
-    font-size: 1.2em;
+    padding: 8px;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -172,13 +172,13 @@ button:active {
 
 .mode-btn {
     flex: 1;
-    padding: 18px;
+    padding: 12px;
     border: none;
     background: transparent;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 1.5em;
+    font-size: 1rem;
     transition: all 0.3s ease;
     margin: 0;
 }
@@ -198,8 +198,8 @@ button:active {
 }
 
 .page-time .mode-btn {
-    padding: 15px 12px;
-    font-size: 1.35em;
+    padding: 10px 8px;
+    font-size: 0.875rem;
 }
 
 .page-time .mode-btn.active {
@@ -231,12 +231,12 @@ button:active {
 
 .result h3 {
     color: #333;
-    margin-bottom: 12px;
-    font-size: 1.8em;
+    margin-bottom: 8px;
+    font-size: 1.125rem;
 }
 
 .result-value {
-    font-size: 2.25em;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #667eea;
     margin: 12px 0;
@@ -270,7 +270,7 @@ button:active {
 }
 
 .widget-icon {
-    font-size: 3.75em;
+    font-size: 2.5rem;
     flex-shrink: 0;
 }
 
@@ -279,13 +279,13 @@ button:active {
 }
 
 .widget-title {
-    font-size: 1.95em;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .widget-description {
-    font-size: 1.35em;
+    font-size: 0.875rem;
     line-height: 1.3;
     opacity: 0.9;
 }
@@ -319,9 +319,9 @@ button:active {
 .footer {
     text-align: center;
     color: #666;
-    font-size: 1.2em;
-    margin-top: 25px;
-    padding-top: 15px;
+    font-size: 0.75rem;
+    margin-top: 24px;
+    padding-top: 16px;
     border-top: 1px solid #eee;
     line-height: 1.5;
 }
@@ -343,20 +343,20 @@ button:active {
     color: #667eea;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.35em;
+    font-size: 0.875rem;
 }
 
 .note {
-    font-size: 1.2em;
+    font-size: 0.75rem;
     color: #666;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 16px;
     line-height: 1.4;
 }
 
 /* === 血液酒精濃度特殊樣式 === */
 .bac-value {
-    font-size: 3em;
+    font-size: 2rem;
     font-weight: 700;
     color: #667eea;
     margin: 12px 0;
@@ -365,31 +365,31 @@ button:active {
 .warning {
     background: #fff3cd;
     border: 1px solid #ffeaa7;
-    border-radius: 6px;
-    padding: 18px;
+    border-radius: 8px;
+    padding: 16px;
     margin-top: 12px;
     color: #856404;
-    font-size: 1.35em;
+    font-size: 0.875rem;
 }
 
 .danger {
     background: #f8d7da;
     border: 1px solid #f5c6cb;
-    border-radius: 6px;
-    padding: 18px;
+    border-radius: 8px;
+    padding: 16px;
     margin-top: 12px;
     color: #721c24;
-    font-size: 1.35em;
+    font-size: 0.875rem;
 }
 
 .safe {
     background: #d4edda;
     border: 1px solid #c3e6cb;
-    border-radius: 6px;
-    padding: 18px;
+    border-radius: 8px;
+    padding: 16px;
     margin-top: 12px;
     color: #155724;
-    font-size: 1.35em;
+    font-size: 0.875rem;
 }
 
 /* === 比價計算器特殊樣式 === */
@@ -402,8 +402,8 @@ button:active {
 
 .add-section h2 {
     color: #333;
-    margin-bottom: 15px;
-    font-size: 1.95em;
+    margin-bottom: 12px;
+    font-size: 1.5rem;
 }
 
 .form-row {
@@ -439,17 +439,17 @@ button:active {
     right: 12px;
     background: #4caf50;
     color: white;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.75em;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.625rem;
     font-weight: 600;
 }
 
 .product-name {
-    font-size: 1.8em;
+    font-size: 1.125rem;
     font-weight: 700;
     color: #333;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .product-details {
@@ -467,13 +467,13 @@ button:active {
 }
 
 .detail-label {
-    font-size: 1.2em;
+    font-size: 0.75rem;
     color: #666;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .detail-value {
-    font-size: 1.5em;
+    font-size: 0.875rem;
     font-weight: 600;
     color: #333;
 }
@@ -488,13 +488,13 @@ button:active {
 }
 
 .unit-price-label {
-    font-size: 1.2em;
+    font-size: 0.75rem;
     opacity: 0.9;
     margin-bottom: 4px;
 }
 
 .unit-price-value {
-    font-size: 1.8em;
+    font-size: 1.125rem;
     font-weight: 700;
 }
 
@@ -505,18 +505,18 @@ button:active {
 }
 
 .empty-state .emoji {
-    font-size: 4.5em;
-    margin-bottom: 15px;
+    font-size: 3rem;
+    margin-bottom: 12px;
     display: block;
 }
 
 .empty-state h3 {
-    font-size: 1.8em;
+    font-size: 1.125rem;
     margin-bottom: 8px;
 }
 
 .empty-state p {
-    font-size: 1.35em;
+    font-size: 0.875rem;
 }
 
 /* === 時間計算器特殊樣式 === */
@@ -560,13 +560,13 @@ button:active {
 }
 
 .countdown-time {
-    font-size: 3em;
+    font-size: 2rem;
     font-weight: 700;
     margin: 10px 0;
 }
 
 .countdown-label {
-    font-size: 1.35em;
+    font-size: 0.875rem;
     opacity: 0.9;
 }
 
@@ -592,17 +592,17 @@ button:active {
 .timezone-city {
     font-weight: 600;
     color: #333;
-    font-size: 1.5em;
+    font-size: 1rem;
 }
 
 .timezone-time {
-    font-size: 1.65em;
+    font-size: 1.125rem;
     color: #17a2b8;
     font-weight: 700;
 }
 
 .comparison-section h2 {
     color: #333;
-    margin-bottom: 15px;
-    font-size: 1.95em;
+    margin-bottom: 12px;
+    font-size: 1.5rem;
 }
