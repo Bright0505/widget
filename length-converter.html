@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>長度換算器 | Widget 工具集</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-length">
+    <div class="container">
+        <div class="header">
+            <h1>📏 長度換算器</h1>
+            <div class="subtitle">公制、英制單位快速換算，支援雙向轉換</div>
+        </div>
+
+        <div class="main-content">
+            <!-- 轉換模式選擇 -->
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" onclick="switchMode('convert')">單位換算</button>
+                <button type="button" class="mode-btn" onclick="switchMode('reference')">換算表</button>
+            </div>
+
+            <!-- 換算模式 -->
+            <div id="convertMode" class="calculator-mode active">
+                <form id="lengthForm">
+                    <div class="form-group">
+                        <label for="inputValue">輸入數值</label>
+                        <input type="number" id="inputValue" step="any" placeholder="請輸入長度數值" required oninput="convertLength()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fromUnit">來源單位</label>
+                        <select id="fromUnit" required onchange="convertLength()">
+                            <optgroup label="📐 公制單位">
+                                <option value="mm">毫米 (mm)</option>
+                                <option value="cm" selected>公分 (cm)</option>
+                                <option value="m">公尺 (m)</option>
+                                <option value="km">公里 (km)</option>
+                            </optgroup>
+                            <optgroup label="📏 英制單位">
+                                <option value="in">英吋 (in)</option>
+                                <option value="ft">英尺 (ft)</option>
+                                <option value="yd">碼 (yd)</option>
+                                <option value="mi">英里 (mi)</option>
+                            </optgroup>
+                            <optgroup label="🌊 其他單位">
+                                <option value="nmi">海里 (nmi)</option>
+                                <option value="mil">密耳 (mil)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="conversion-arrow">
+                        <button type="button" class="swap-btn" onclick="swapUnits()" title="交換單位">⇅</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="toUnit">目標單位</label>
+                        <select id="toUnit" required onchange="convertLength()">
+                            <optgroup label="📐 公制單位">
+                                <option value="mm">毫米 (mm)</option>
+                                <option value="cm">公分 (cm)</option>
+                                <option value="m" selected>公尺 (m)</option>
+                                <option value="km">公里 (km)</option>
+                            </optgroup>
+                            <optgroup label="📏 英制單位">
+                                <option value="in">英吋 (in)</option>
+                                <option value="ft">英尺 (ft)</option>
+                                <option value="yd">碼 (yd)</option>
+                                <option value="mi">英里 (mi)</option>
+                            </optgroup>
+                            <optgroup label="🌊 其他單位">
+                                <option value="nmi">海里 (nmi)</option>
+                                <option value="mil">密耳 (mil)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </form>
+
+                <div id="lengthResult" class="result">
+                    <h3>📏 換算結果</h3>
+                    <div class="result-value" id="resultValue">輸入數值後顯示結果</div>
+                    <div class="result-detail" id="resultDetail"></div>
+                </div>
+
+                <!-- 快速轉換 -->
+                <div class="quick-convert">
+                    <h3>⚡ 快速換算</h3>
+                    <div class="quick-grid">
+                        <button type="button" class="quick-btn" onclick="quickConvert(1, 'm', 'ft')">1公尺 → 英尺</button>
+                        <button type="button" class="quick-btn" onclick="quickConvert(1, 'km', 'mi')">1公里 → 英里</button>
+                        <button type="button" class="quick-btn" onclick="quickConvert(1, 'in', 'cm')">1英吋 → 公分</button>
+                        <button type="button" class="quick-btn" onclick="quickConvert(1, 'ft', 'm')">1英尺 → 公尺</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 換算表模式 -->
+            <div id="referenceMode" class="calculator-mode">
+                <h3>📊 常用換算對照表</h3>
+
+                <div class="reference-section">
+                    <h4>公制單位換算</h4>
+                    <table class="reference-table">
+                        <tr><th>單位</th><th>= 公尺</th><th>= 公分</th></tr>
+                        <tr><td>1 毫米 (mm)</td><td>0.001 m</td><td>0.1 cm</td></tr>
+                        <tr><td>1 公分 (cm)</td><td>0.01 m</td><td>1 cm</td></tr>
+                        <tr><td>1 公尺 (m)</td><td>1 m</td><td>100 cm</td></tr>
+                        <tr><td>1 公里 (km)</td><td>1000 m</td><td>100,000 cm</td></tr>
+                    </table>
+                </div>
+
+                <div class="reference-section">
+                    <h4>英制單位換算</h4>
+                    <table class="reference-table">
+                        <tr><th>單位</th><th>= 英尺</th><th>= 英吋</th></tr>
+                        <tr><td>1 英吋 (in)</td><td>0.0833 ft</td><td>1 in</td></tr>
+                        <tr><td>1 英尺 (ft)</td><td>1 ft</td><td>12 in</td></tr>
+                        <tr><td>1 碼 (yd)</td><td>3 ft</td><td>36 in</td></tr>
+                        <tr><td>1 英里 (mi)</td><td>5,280 ft</td><td>63,360 in</td></tr>
+                    </table>
+                </div>
+
+                <div class="reference-section">
+                    <h4>公制 ⇄ 英制</h4>
+                    <table class="reference-table">
+                        <tr><th>公制</th><th>英制</th></tr>
+                        <tr><td>1 公分</td><td>≈ 0.394 英吋</td></tr>
+                        <tr><td>1 公尺</td><td>≈ 3.281 英尺</td></tr>
+                        <tr><td>1 公里</td><td>≈ 0.621 英里</td></tr>
+                        <tr><td>1 英吋</td><td>= 2.54 公分</td></tr>
+                        <tr><td>1 英尺</td><td>≈ 0.305 公尺</td></tr>
+                        <tr><td>1 英里</td><td>≈ 1.609 公里</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-btn">
+            <a href="index.html">← 回到首頁</a>
+        </div>
+    </div>
+
+    <script>
+        // 單位換算係數（轉換為公尺）
+        const unitConversions = {
+            // 公制單位
+            'mm': 0.001,
+            'cm': 0.01,
+            'm': 1,
+            'km': 1000,
+            // 英制單位
+            'in': 0.0254,
+            'ft': 0.3048,
+            'yd': 0.9144,
+            'mi': 1609.344,
+            // 其他單位
+            'nmi': 1852,     // 海里
+            'mil': 0.0000254  // 密耳
+        };
+
+        // 單位顯示名稱
+        const unitNames = {
+            'mm': '毫米',
+            'cm': '公分',
+            'm': '公尺',
+            'km': '公里',
+            'in': '英吋',
+            'ft': '英尺',
+            'yd': '碼',
+            'mi': '英里',
+            'nmi': '海里',
+            'mil': '密耳'
+        };
+
+        function switchMode(mode) {
+            // 切換按鈕樣式
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 切換內容區域
+            document.querySelectorAll('.calculator-mode').forEach(mode => {
+                mode.classList.remove('active');
+            });
+            document.getElementById(mode + 'Mode').classList.add('active');
+        }
+
+        function convertLength() {
+            const inputValue = document.getElementById('inputValue').value;
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+
+            if (!inputValue || !fromUnit || !toUnit) {
+                document.getElementById('resultValue').textContent = '輸入數值後顯示結果';
+                document.getElementById('resultDetail').textContent = '';
+                return;
+            }
+
+            const inputNumber = parseFloat(inputValue);
+            if (isNaN(inputNumber)) {
+                document.getElementById('resultValue').textContent = '請輸入有效數值';
+                document.getElementById('resultDetail').textContent = '';
+                return;
+            }
+
+            // 將輸入值轉換為公尺，再轉換為目標單位
+            const inMeters = inputNumber * unitConversions[fromUnit];
+            const result = inMeters / unitConversions[toUnit];
+
+            // 格式化結果
+            const formattedResult = formatResult(result);
+            const fromUnitName = unitNames[fromUnit];
+            const toUnitName = unitNames[toUnit];
+
+            document.getElementById('resultValue').innerHTML =
+                `<strong>${formattedResult} ${toUnitName}</strong>`;
+
+            document.getElementById('resultDetail').innerHTML =
+                `${inputNumber} ${fromUnitName} = ${formattedResult} ${toUnitName}`;
+        }
+
+        function formatResult(value) {
+            if (Math.abs(value) >= 1000000) {
+                return value.toExponential(6);
+            } else if (Math.abs(value) >= 100) {
+                return value.toFixed(2).replace(/\.?0+$/, '');
+            } else if (Math.abs(value) >= 1) {
+                return value.toFixed(4).replace(/\.?0+$/, '');
+            } else if (Math.abs(value) >= 0.001) {
+                return value.toFixed(6).replace(/\.?0+$/, '');
+            } else if (Math.abs(value) > 0) {
+                return value.toExponential(6);
+            } else {
+                return '0';
+            }
+        }
+
+        function swapUnits() {
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+
+            const tempValue = fromUnit.value;
+            fromUnit.value = toUnit.value;
+            toUnit.value = tempValue;
+
+            convertLength();
+        }
+
+        function quickConvert(value, from, to) {
+            document.getElementById('inputValue').value = value;
+            document.getElementById('fromUnit').value = from;
+            document.getElementById('toUnit').value = to;
+            convertLength();
+
+            // 切換到轉換模式
+            switchMode('convert');
+            document.querySelectorAll('.mode-btn')[0].classList.add('active');
+            document.querySelectorAll('.mode-btn')[1].classList.remove('active');
+        }
+
+        // 頁面載入時執行初始轉換
+        document.addEventListener('DOMContentLoaded', function() {
+            // 設定預設值
+            document.getElementById('inputValue').value = '1';
+            convertLength();
+        });
+    </script>
+
+    <style>
+        /* 長度換算器專用樣式 */
+        .page-length body {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 10px 20px 20px 20px;
+        }
+
+        .page-length .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            margin: 0;
+        }
+
+        .page-length .header h1,
+        .page-length .header .subtitle {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .page-length .main-content {
+            padding: 20px;
+        }
+
+        .conversion-arrow {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .swap-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .quick-convert {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef7f0;
+            border-radius: 10px;
+            border-left: 4px solid #ffa726;
+        }
+
+        .quick-convert h3 {
+            color: #f57c00;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quick-btn {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #f57c00;
+            border: 1px solid #ffcc02;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-btn:hover {
+            background: linear-gradient(135deg, #ffa726 0%, #ff8f00 100%);
+            color: white;
+        }
+
+        .reference-section {
+            margin-bottom: 24px;
+        }
+
+        .reference-section h4 {
+            color: #f57c00;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .reference-table th,
+        .reference-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ffe0b2;
+        }
+
+        .reference-table th {
+            background: #fff3e0;
+            color: #f57c00;
+            font-weight: 600;
+        }
+
+        .reference-table tr:nth-child(even) {
+            background: #fefefe;
+        }
+
+        .reference-table tr:hover {
+            background: #fff8f1;
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 600px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reference-table {
+                font-size: 0.75rem;
+            }
+
+            .reference-table th,
+            .reference-table td {
+                padding: 6px;
+            }
+        }
+    </style>
+</body>
+</html>
