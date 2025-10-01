@@ -23,7 +23,7 @@ function parseClaudeCommand(text) {
 // 調用 Claude API
 async function callClaude(prompt, systemContext) {
   const data = JSON.stringify({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-3-5-haiku-20241022',
     max_tokens: 4096,
     system: systemContext,
     messages: [{
