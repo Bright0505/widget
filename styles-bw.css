@@ -1,0 +1,240 @@
+/* Widget 工具集 - 黑白風格樣式表 */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #333 0%, #222 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 15px 20px;
+    color: #f0f0f0;
+}
+
+.container {
+    background: #f0f0f0;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    max-width: 100%;
+    width: 100%;
+    margin: 10px 10px 0 10px;
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    color: #111;
+    margin-bottom: 8px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    text-align: center;
+    color: #444;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: #222;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+select {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #777;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    transition: border-color 0.3s ease;
+    background: #fff;
+    color: #222;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #555;
+}
+
+.unit {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #333 0%, #222 100%);
+    color: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 16px 0;
+}
+
+button:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #222 0%, #111 100%);
+}
+
+.widget-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.widget-card {
+    background: linear-gradient(135deg, #444 0%, #333 100%);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: #f0f0f0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mode-selector {
+    display: flex;
+    background: #555;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 30px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin: 0;
+    color: #f0f0f0;
+}
+
+.mode-btn.active {
+    background: #f0f0f0;
+    color: #222;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.result {
+    background: #777;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: center;
+    display: none;
+    color: #f0f0f0;
+}
+
+.result h3 {
+    color: #f0f0f0;
+    margin-bottom: 8px;
+    font-size: 1.125rem;
+}
+
+.result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin: 12px 0;
+    line-height: 1.4;
+}
+
+.footer {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.75rem;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #444;
+    line-height: 1.5;
+}
+
+.github-link {
+    color: #f0f0f0;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #444;
+}
+
+.back-link a {
+    color: #f0f0f0;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Additional page-specific black and white styles */
+.warning {
+    background: #444;
+    border: 1px solid #333;
+    color: #f0f0f0;
+}
+
+.danger {
+    background: #333;
+    border: 1px solid #222;
+    color: #f0f0f0;
+}
+
+.safe {
+    background: #444;
+    border: 1px solid #333;
+    color: #f0f0f0;
+}
+
+.product-card {
+    background: #f0f0f0;
+    border: 2px solid #666;
+    color: #222;
+}
+
+.detail-item {
+    background: #e0e0e0;
+}
+
+.detail-label {
+    color: #555;
+}
+
+.detail-value {
+    color: #222;
+}
