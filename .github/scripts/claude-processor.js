@@ -51,13 +51,25 @@ async function callClaude(prompt, systemContext) {
       res.on('end', () => {
         try {
           const response = JSON.parse(body);
-          if (response.content && response.content[0]) {
+
+          // 詳細記錄回應結構以便除錯
+          console.log('API Response Status:', res.statusCode);
+          console.log('API Response:', JSON.stringify(response, null, 2));
+
+          // 處理錯誤回應
+          if (response.error) {
+            reject(new Error(`Claude API Error: ${response.error.type} - ${response.error.message}`));
+            return;
+          }
+
+          // 檢查回應格式
+          if (response.content && response.content[0] && response.content[0].text) {
             resolve(response.content[0].text);
           } else {
-            reject(new Error('Unexpected API response format'));
+            reject(new Error(`Unexpected API response format. Response: ${JSON.stringify(response)}`));
           }
         } catch (err) {
-          reject(err);
+          reject(new Error(`JSON Parse Error: ${err.message}. Body: ${body}`));
         }
       });
     });
