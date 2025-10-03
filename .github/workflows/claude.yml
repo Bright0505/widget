@@ -13,6 +13,8 @@ on:
 jobs:
   claude:
     runs-on: ubuntu-latest
+    # 只在包含 @claude 時執行
+    if: contains(github.event.comment.body, '@claude') || contains(github.event.issue.body, '@claude') || github.event_name == 'pull_request' || github.event_name == 'pull_request_review_comment'
     permissions:
       issues: write
       pull-requests: write
@@ -29,3 +31,4 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: "--model claude-3-5-haiku-20241022"
