@@ -31,9 +31,28 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="alcoholConcentration">使用酒精濃度</label>
+                    <label for="alcoholConcentration">基酒濃度</label>
                     <input type="number" id="alcoholConcentration" step="0.1" min="0" max="100" value="40" required>
                     <div class="unit">單位：百分比 (%) - 例如：40% 伏特加</div>
+                </div>
+
+                <div id="liquidInputs">
+                    <div class="liquid-input-group">
+                        <div class="form-group">
+                            <label for="liquidConcentration1">輔料濃度</label>
+                            <input type="number" id="liquidConcentration1" step="0.1" min="0" max="100" placeholder="輔料酒精濃度">
+                            <div class="unit">單位：百分比 (%) - 可選</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="liquidVolume1">輔料容量</label>
+                            <input type="number" id="liquidVolume1" step="0.1" min="0" placeholder="輔料液體容量">
+                            <div class="unit">單位：毫升 (ml) - 可選</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="addLiquidBtn" onclick="addLiquidInput()">➕ 新增輔料</button>
                 </div>
 
                 <button type="submit">🍸 計算需要多少酒精</button>
@@ -119,6 +138,30 @@
         });
 
         // 調酒計算功能
+        let liquidInputCounter = 1;
+
+        // 動態增加輔料輸入框
+        function addLiquidInput() {
+            liquidInputCounter++;
+            const liquidInputs = document.getElementById('liquidInputs');
+            const newInputGroup = document.createElement('div');
+            newInputGroup.classList.add('liquid-input-group');
+            newInputGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="liquidConcentration${liquidInputCounter}">輔料濃度</label>
+                    <input type="number" id="liquidConcentration${liquidInputCounter}" step="0.1" min="0" max="100" placeholder="輔料酒精濃度">
+                    <div class="unit">單位：百分比 (%) - 可選</div>
+                </div>
+                <div class="form-group">
+                    <label for="liquidVolume${liquidInputCounter}">輔料容量</label>
+                    <input type="number" id="liquidVolume${liquidInputCounter}" step="0.1" min="0" placeholder="輔料液體容量">
+                    <div class="unit">單位：毫升 (ml) - 可選</div>
+                </div>
+                <button type="button" onclick="this.closest('.liquid-input-group').remove()">➖ 移除</button>
+            `;
+            liquidInputs.appendChild(newInputGroup);
+        }
+
         function calculateMixing() {
             const targetConcentration = parseFloat(document.getElementById('targetConcentration').value);
             const totalVolume = parseFloat(document.getElementById('totalVolume').value);
@@ -126,6 +169,36 @@
 
             if (isNaN(targetConcentration) || isNaN(totalVolume) || isNaN(alcoholConcentration)) {
                 alert('請填寫所有必要欄位');
+                return;
+            }
+
+            // 收集所有輔料的濃度和容量
+            const additionalLiquids = [];
+            let additionalVolume = 0;
+
+            for (let i = 1; i <= liquidInputCounter; i++) {
+                const concentrationInput = document.getElementById(`liquidConcentration${i}`);
+                const volumeInput = document.getElementById(`liquidVolume${i}`);
+
+                if (concentrationInput && volumeInput) {
+                    const liquidConcentration = parseFloat(concentrationInput.value) || 0;
+                    const liquidVolume = parseFloat(volumeInput.value) || 0;
+
+                    if (liquidVolume > 0) {
+                        additionalLiquids.push({
+                            concentration: liquidConcentration,
+                            volume: liquidVolume
+                        });
+                        additionalVolume += liquidVolume;
+                    }
+                }
+            }
+
+            // 計算實際可用的總容量
+            const availableVolume = totalVolume - additionalVolume;
+
+            if (availableVolume <= 0) {
+                alert('輔料容量不能超過總液體量');
                 return;
             }
 
@@ -145,15 +218,15 @@
             }
 
             // 計算需要的酒精容量
-            // 公式：酒精容量 = (目標濃度 × 總容量) ÷ 酒精濃度
-            const alcoholVolumeRaw = (targetConcentration * totalVolume) / alcoholConcentration;
-            
+            // 公式：酒精容量 = (目標濃度 × 可用容量) ÷ 酒精濃度
+            const alcoholVolumeRaw = (targetConcentration * availableVolume) / alcoholConcentration;
+
             // 智能四捨五入 - 優先顯示以 0 或 5 結尾的整數
             function smartRound(value) {
                 const rounded = Math.round(value);
                 const rounded5 = Math.round(value / 5) * 5;
                 const rounded10 = Math.round(value / 10) * 10;
-                
+
                 // 如果原值和10的倍數差距在5%以內，優先顯示10的倍數
                 if (Math.abs(value - rounded10) / value <= 0.05) {
                     return rounded10;
@@ -167,9 +240,15 @@
                     return rounded;
                 }
             }
-            
+
             const alcoholVolume = smartRound(alcoholVolumeRaw);
-            const nonAlcoholVolume = totalVolume - alcoholVolume;
+
+            // 計算輔料液體的加權濃度
+            const additionalConcentration = additionalLiquids.reduce((acc, liquid) => {
+                return acc + (liquid.concentration * liquid.volume / additionalVolume);
+            }, 0);
+
+            const nonAlcoholVolume = totalVolume - alcoholVolume - additionalVolume;
 
             // 驗證結果
             if (alcoholVolume > totalVolume) {
@@ -182,16 +261,85 @@
                 return;
             }
 
-            // 計算實際達成的濃度（基於調整後的酒精用量）
+            // 計算實際濃度
             const actualConcentration = (alcoholVolume * alcoholConcentration) / totalVolume;
+
+            // 準備輔料詳細資訊
+            const additionalLiquidDetails = additionalLiquids.map(liquid =>
+                `${liquid.volume} ml ${liquid.concentration}% 輔料`
+            ).join('、');
 
             // 顯示結果
             const resultDiv = document.getElementById('mixingCalculation');
             resultDiv.innerHTML = `
                 <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); padding: 20px; border-radius: 15px; margin: 15px 0; color: white;">
                     <h4 style="color: white; margin-bottom: 20px; text-align: center;">🍹 完美調酒配方</h4>
-                    
+
                     <!-- 主要結果 - 酒精用量 -->
+                    <div style="background: rgba(255,255,255,0.95); padding: 25px; border-radius: 12px; margin-bottom: 20px; color: #333;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2em; color: #666; margin-bottom: 8px;">🥃 需要酒精 (${alcoholConcentration}%)</div>
+                            <div style="font-size: 3em; font-weight: 700; color: #ff6b6b; margin: 10px 0;">${alcoholVolume} ml</div>
+                            <div style="color: #888; font-size: 0.9em;">約 ${((alcoholVolume / totalVolume) * 100).toFixed(0)}% 比例</div>
+                            ${Math.abs(alcoholVolumeRaw - alcoholVolume) > 0.5 ?
+                                `<div style="background: #fff3cd; padding: 8px; border-radius: 6px; margin-top: 10px; color: #856404; font-size: 0.85em;">
+                                    💡 為便於測量已調整為 ${alcoholVolume}ml (原計算值: ${alcoholVolumeRaw.toFixed(1)}ml)
+                                </div>` : ''
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 詳細配方 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
+                            <div style="font-size: 1.5em; margin-bottom: 8px;">🍺</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">酒精 (${alcoholConcentration}%)</div>
+                            <div style="font-size: 1.4em; font-weight: 700; color: #ff6b6b;">${alcoholVolume} ml</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
+                            <div style="font-size: 1.5em; margin-bottom: 8px;">🧊</div>
+                            <div style="font-weight: 600; margin-bottom: 5px;">輔料</div>
+                            <div style="font-size: 1.4em; font-weight: 700; color: #42a5f5;">${additionalVolume} ml</div>
+                        </div>
+                    </div>
+
+                    <!-- 輔料詳細資訊 -->
+                    ${additionalLiquids.length > 0 ? `
+                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-bottom: 20px; color: #333;">
+                        <div style="font-size: 1.1em; color: #666; margin-bottom: 8px;">🍹 輔料明細</div>
+                        <div style="font-weight: 700; font-size: 1em; color: #333;">
+                            ${additionalLiquidDetails}
+                        </div>
+                    </div>` : ''}
+
+                    <!-- 最終結果卡片 -->
+                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; text-align: center; color: #333;">
+                        <div style="font-size: 1.1em; color: #666; margin-bottom: 8px;">🎯 調酒結果</div>
+                        <div style="font-weight: 700; font-size: 1.3em; color: #333;">
+                            總容量: ${totalVolume} ml | 實際濃度: ${actualConcentration.toFixed(1)}%
+                            ${Math.abs(actualConcentration - targetConcentration) > 0.1 ?
+                                ` (目標: ${targetConcentration}%)` : ''
+                            }
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; color: #666; font-size: 0.9em;">
+                            純酒精含量: ${(alcoholVolume * alcoholConcentration / 100).toFixed(0)} ml
+                        </div>
+                    </div>
+
+                    <!-- 調酒提示 -->
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #4caf50;">
+                        <div style="font-size: 0.95em; color: white; line-height: 1.4;">
+                            🍸 <strong>調酒技巧：</strong><br>
+                            1. 先加入 ${alcoholVolume}ml 的 ${alcoholConcentration}% 酒精<br>
+                            2. 再加入 ${additionalLiquids.map(l => `${l.volume}ml ${l.concentration}% 輔料`).join('、')}<br>
+                            3. 攪拌均勻，享受 ${actualConcentration.toFixed(1)}% 的完美調酒！
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mixingResult').classList.add('show');
+        }
                     <div style="background: rgba(255,255,255,0.95); padding: 25px; border-radius: 12px; margin-bottom: 20px; color: #333;">
                         <div style="text-align: center;">
                             <div style="font-size: 1.2em; color: #666; margin-bottom: 8px;">🥃 需要酒精 (${alcoholConcentration}%)</div>
