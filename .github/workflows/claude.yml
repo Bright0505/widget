@@ -35,4 +35,5 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          mode: branch
           claude_args: "--model claude-3-5-haiku-20241022"
