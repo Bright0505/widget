@@ -9,8 +9,8 @@
 
 /* === 全域樣式 === */
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+    background: #f3f4f6;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -88,10 +88,10 @@ select {
     transition: border-color 0.3s ease;
 }
 
-input:focus, 
+input:focus,
 select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #374151;
 }
 
 .unit {
@@ -104,15 +104,19 @@ select:focus {
 button {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #374151;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 1.125rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
     margin: 16px 0;
+}
+
+button:hover {
+    background: #1f2937;
 }
 
 button:active {
@@ -121,32 +125,44 @@ button:active {
 
 /* 特殊按鈕樣式 */
 .add-btn {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: #059669;
     margin-top: 8px;
     padding: 16px;
     font-size: 1.125rem;
 }
 
+.add-btn:hover {
+    background: #047857;
+}
+
 .delete-btn {
-    background: #dc3545;
+    background: #dc2626;
     padding: 12px;
     font-size: 0.875rem;
     margin: 0;
 }
 
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
 .delete-btn:active {
-    background: #c82333;
+    background: #991b1b;
 }
 
 .now-btn {
-    background: #28a745;
+    background: #059669;
     padding: 8px 12px;
     font-size: 0.875rem;
     margin: 4px 0;
 }
 
+.now-btn:hover {
+    background: #047857;
+}
+
 .quick-btn {
-    background: #6c757d;
+    background: #6b7280;
     color: white;
     border: none;
     border-radius: 6px;
@@ -156,8 +172,12 @@ button:active {
     transition: all 0.2s ease;
 }
 
+.quick-btn:hover {
+    background: #4b5563;
+}
+
 .quick-btn:active {
-    background: #5a6268;
+    background: #374151;
     transform: scale(0.98);
 }
 
@@ -185,7 +205,7 @@ button:active {
 
 .mode-btn.active {
     background: white;
-    color: #667eea;
+    color: #374151;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -203,7 +223,7 @@ button:active {
 }
 
 .page-time .mode-btn.active {
-    color: #17a2b8;
+    color: #374151;
 }
 
 /* === 計算器模式切換 === */
@@ -238,7 +258,7 @@ button:active {
 .result-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #667eea;
+    color: #374151;
     margin: 12px 0;
     line-height: 1.4;
 }
@@ -252,17 +272,22 @@ button:active {
 }
 
 .widget-card {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+    background: #374151;
     border-radius: 12px;
     padding: 20px;
     text-decoration: none;
     color: white;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+.widget-card:hover {
+    background: #1f2937;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .widget-card:active {
@@ -291,9 +316,14 @@ button:active {
 }
 
 .coming-soon {
-    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    background: #9ca3af;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.6;
+}
+
+.coming-soon:hover {
+    background: #9ca3af;
+    box-shadow: none;
 }
 
 /* === 頁面頭部 (比價和時間計算器) === */
@@ -301,14 +331,7 @@ button:active {
     color: white;
     padding: 20px;
     text-align: center;
-}
-
-.page-price .header {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
-}
-
-.page-time .header {
-    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+    background: #374151;
 }
 
 .main-content {
@@ -327,9 +350,13 @@ button:active {
 }
 
 .github-link {
-    color: #667eea;
+    color: #374151;
     text-decoration: none;
     font-weight: 600;
+}
+
+.github-link:hover {
+    color: #1f2937;
 }
 
 .back-link {
@@ -340,10 +367,14 @@ button:active {
 }
 
 .back-link a {
-    color: #667eea;
+    color: #374151;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.875rem;
+}
+
+.back-link a:hover {
+    color: #1f2937;
 }
 
 .note {
@@ -358,7 +389,7 @@ button:active {
 .bac-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #667eea;
+    color: #374151;
     margin: 12px 0;
 }
 
@@ -428,8 +459,8 @@ button:active {
 }
 
 .product-card.best-deal {
-    border-color: #4caf50;
-    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.2);
+    border-color: #059669;
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.2);
 }
 
 .product-card.best-deal::before {
@@ -437,7 +468,7 @@ button:active {
     position: absolute;
     top: -8px;
     right: 12px;
-    background: #4caf50;
+    background: #059669;
     color: white;
     padding: 4px 8px;
     border-radius: 8px;
@@ -481,7 +512,7 @@ button:active {
 .unit-price {
     text-align: center;
     padding: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #374151;
     color: white;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -521,20 +552,28 @@ button:active {
 
 /* === 時間計算器特殊樣式 === */
 .page-time button {
-    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+    background: #374151;
 }
 
-.page-time input:focus, 
+.page-time button:hover {
+    background: #1f2937;
+}
+
+.page-time input:focus,
 .page-time select:focus {
-    border-color: #17a2b8;
+    border-color: #374151;
 }
 
 .page-time .result-value {
-    color: #17a2b8;
+    color: #374151;
 }
 
 .page-time .back-link a {
-    color: #17a2b8;
+    color: #374151;
+}
+
+.page-time .back-link a:hover {
+    color: #1f2937;
 }
 
 .time-row {
@@ -551,7 +590,7 @@ button:active {
 }
 
 .countdown-display {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+    background: #374151;
     color: white;
     border-radius: 10px;
     padding: 20px;
@@ -597,7 +636,7 @@ button:active {
 
 .timezone-time {
     font-size: 1.125rem;
-    color: #17a2b8;
+    color: #374151;
     font-weight: 700;
 }
 

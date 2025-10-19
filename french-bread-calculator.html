@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法國麵包配方計算器 | Widget 工具集</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 法國麵包專屬樣式 */
+        .page-bread button {
+            background: #374151;
+        }
+
+        .page-bread button:hover {
+            background: #1f2937;
+        }
+
+        .page-bread input:focus {
+            border-color: #374151;
+        }
+
+        .page-bread .mode-btn.active {
+            color: #374151;
+        }
+
+        .page-bread .result-value {
+            color: #374151;
+        }
+
+        .page-bread .back-link a {
+            color: #374151;
+        }
+
+        .page-bread .back-link a:hover {
+            color: #1f2937;
+        }
+
+        .recipe-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .recipe-item:last-child {
+            border-bottom: none;
+            padding-top: 12px;
+            margin-top: 8px;
+            border-top: 2px solid #374151;
+            font-weight: 700;
+        }
+
+        .ingredient-name {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .ingredient-value {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .ingredient-amount {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .ingredient-percent {
+            font-size: 0.875rem;
+            color: #888;
+        }
+
+        .tips-section {
+            background: #f9fafb;
+            border-left: 4px solid #374151;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .tips-section h4 {
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .tips-section ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .tips-section li {
+            color: #666;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body class="page-bread">
+    <div class="container">
+        <h1>🥖 法國麵包配方計算器</h1>
+
+        <div class="mode-selector">
+            <button type="button" class="mode-btn active" onclick="switchRecipe('t55')">T55 長棍</button>
+            <button type="button" class="mode-btn" onclick="switchRecipe('t65')">T65 鄉村</button>
+        </div>
+
+        <!-- T55 配方 -->
+        <div id="t55Mode" class="calculator-mode active">
+            <form id="t55Form" onsubmit="calculateRecipe(event, 't55')">
+                <div class="form-group">
+                    <label for="t55Flour">麵粉重量</label>
+                    <input type="number" id="t55Flour" step="1" min="1" required>
+                    <div class="unit">單位：公克 (g) - 例如：500g</div>
+                </div>
+
+                <button type="submit">🥖 計算配方用量</button>
+            </form>
+
+            <div id="t55Result" class="result">
+                <h3>📊 T55 配方用量</h3>
+                <div id="t55Calculation"></div>
+                <div class="tips-section">
+                    <h4>💡 製作提示</h4>
+                    <ul>
+                        <li>發酵時間：室溫 2-3 小時或冷藏隔夜發酵</li>
+                        <li>烘烤溫度：230-240°C（預熱充分）</li>
+                        <li>烘烤時間：20-25 分鐘（表面金黃）</li>
+                        <li>蒸氣：烤箱底部放水盤，烘烤時噴水製造蒸氣</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- T65 配方 -->
+        <div id="t65Mode" class="calculator-mode">
+            <form id="t65Form" onsubmit="calculateRecipe(event, 't65')">
+                <div class="form-group">
+                    <label for="t65Flour">麵粉重量</label>
+                    <input type="number" id="t65Flour" step="1" min="1" required>
+                    <div class="unit">單位：公克 (g) - 例如：500g</div>
+                </div>
+
+                <button type="submit">🍞 計算配方用量</button>
+            </form>
+
+            <div id="t65Result" class="result">
+                <h3>📊 T65 配方用量</h3>
+                <div id="t65Calculation"></div>
+                <div class="tips-section">
+                    <h4>💡 製作提示</h4>
+                    <ul>
+                        <li>發酵時間：室溫 3-4 小時或冷藏隔夜發酵</li>
+                        <li>烘烤溫度：220-230°C（預熱充分）</li>
+                        <li>烘烤時間：30-35 分鐘（敲擊底部有空心聲）</li>
+                        <li>水合度較高，麵團較濕黏，可用刮板輔助整形</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← 返回工具集首頁</a>
+        </div>
+    </div>
+
+    <script>
+        // 配方資料
+        const recipes = {
+            t55: {
+                name: 'T55 長棍麵包',
+                flour: 100,
+                water: 70,
+                salt: 2,
+                yeast: 1
+            },
+            t65: {
+                name: 'T65 鄉村麵包',
+                flour: 100,
+                water: 75,
+                salt: 2.2,
+                yeast: 0.8
+            }
+        };
+
+        // 切換配方
+        function switchRecipe(recipeType) {
+            // 更新按鈕狀態
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 切換顯示的模式
+            document.querySelectorAll('.calculator-mode').forEach(mode => {
+                mode.classList.remove('active');
+            });
+            document.getElementById(recipeType + 'Mode').classList.add('active');
+        }
+
+        // 計算配方
+        function calculateRecipe(event, recipeType) {
+            event.preventDefault();
+
+            const flourInput = document.getElementById(recipeType + 'Flour');
+            const flourWeight = parseFloat(flourInput.value);
+
+            if (!flourWeight || flourWeight <= 0) {
+                alert('請輸入有效的麵粉重量');
+                return;
+            }
+
+            const recipe = recipes[recipeType];
+
+            // 計算各材料重量
+            const flour = flourWeight;
+            const water = Math.round(flourWeight * recipe.water / 100 * 10) / 10;
+            const salt = Math.round(flourWeight * recipe.salt / 100 * 10) / 10;
+            const yeast = Math.round(flourWeight * recipe.yeast / 100 * 10) / 10;
+            const total = Math.round((flour + water + salt + yeast) * 10) / 10;
+
+            // 顯示結果
+            const resultDiv = document.getElementById(recipeType + 'Result');
+            const calculationDiv = document.getElementById(recipeType + 'Calculation');
+
+            calculationDiv.innerHTML = `
+                <div class="recipe-item">
+                    <span class="ingredient-name">🌾 麵粉（${recipe.name.includes('T55') ? 'T55' : 'T65'}）</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${flour} g</span>
+                        <span class="ingredient-percent">(100%)</span>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span class="ingredient-name">💧 水</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${water} g</span>
+                        <span class="ingredient-percent">(${recipe.water}%)</span>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span class="ingredient-name">🧂 鹽</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${salt} g</span>
+                        <span class="ingredient-percent">(${recipe.salt}%)</span>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span class="ingredient-name">🍄 新鮮酵母</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${yeast} g</span>
+                        <span class="ingredient-percent">(${recipe.yeast}%)</span>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span class="ingredient-name">📦 總重量</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${total} g</span>
+                    </div>
+                </div>
+            `;
+
+            resultDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
