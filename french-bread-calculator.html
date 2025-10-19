@@ -107,6 +107,7 @@
         <div class="mode-selector">
             <button type="button" class="mode-btn active" onclick="switchRecipe('t55')">T55 長棍</button>
             <button type="button" class="mode-btn" onclick="switchRecipe('t65')">T65 鄉村</button>
+            <button type="button" class="mode-btn" onclick="switchRecipe('focaccia')">🫓 佛卡夏</button>
         </div>
 
         <!-- T55 配方 -->
@@ -163,6 +164,36 @@
             </div>
         </div>
 
+        <!-- 佛卡夏配方 -->
+        <div id="focacciaMode" class="calculator-mode">
+            <form id="focacciaForm" onsubmit="calculateRecipe(event, 'focaccia')">
+                <div class="form-group">
+                    <label for="focacciaFlour">麵粉重量</label>
+                    <input type="number" id="focacciaFlour" step="1" min="1" required>
+                    <div class="unit">單位：公克 (g) - 例如：500g</div>
+                </div>
+
+                <button type="submit">🫓 計算配方用量</button>
+            </form>
+
+            <div id="focacciaResult" class="result">
+                <h3>📊 佛卡夏配方用量</h3>
+                <div id="focacciaCalculation"></div>
+                <div class="tips-section">
+                    <h4>💡 製作提示</h4>
+                    <ul>
+                        <li>第一次發酵：室溫 1-2 小時（麵團膨脹至兩倍大）</li>
+                        <li>整形：將麵團放入烤盤，輕壓延展成約 2cm 厚</li>
+                        <li>第二次發酵：30-45 分鐘（表面蓋濕布）</li>
+                        <li>戳洞技巧：用指尖在表面戳出均勻凹洞，淋上橄欖油</li>
+                        <li>烘烤溫度：200-220°C（預熱充分）</li>
+                        <li>烘烤時間：20-25 分鐘（表面金黃）</li>
+                        <li>配料建議：迷迭香、海鹽片、番茄、橄欖、洋蔥等</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="back-link">
             <a href="index.html">← 返回工具集首頁</a>
         </div>
@@ -184,6 +215,14 @@
                 water: 75,
                 salt: 2.2,
                 yeast: 0.8
+            },
+            focaccia: {
+                name: '義式佛卡夏',
+                flour: 100,
+                water: 75,
+                salt: 2,
+                yeast: 1,
+                oliveOil: 6
             }
         };
 
@@ -221,15 +260,22 @@
             const water = Math.round(flourWeight * recipe.water / 100 * 10) / 10;
             const salt = Math.round(flourWeight * recipe.salt / 100 * 10) / 10;
             const yeast = Math.round(flourWeight * recipe.yeast / 100 * 10) / 10;
-            const total = Math.round((flour + water + salt + yeast) * 10) / 10;
+            const oliveOil = recipe.oliveOil ? Math.round(flourWeight * recipe.oliveOil / 100 * 10) / 10 : 0;
+            const total = Math.round((flour + water + salt + yeast + oliveOil) * 10) / 10;
 
             // 顯示結果
             const resultDiv = document.getElementById(recipeType + 'Result');
             const calculationDiv = document.getElementById(recipeType + 'Calculation');
 
-            calculationDiv.innerHTML = `
+            // 決定麵粉類型顯示
+            let flourType = '麵粉';
+            if (recipe.name.includes('T55')) flourType = '麵粉（T55）';
+            else if (recipe.name.includes('T65')) flourType = '麵粉（T65）';
+            else if (recipe.name.includes('佛卡夏')) flourType = '麵粉（高筋或中筋）';
+
+            let ingredientsHTML = `
                 <div class="recipe-item">
-                    <span class="ingredient-name">🌾 麵粉（${recipe.name.includes('T55') ? 'T55' : 'T65'}）</span>
+                    <span class="ingredient-name">🌾 ${flourType}</span>
                     <div class="ingredient-value">
                         <span class="ingredient-amount">${flour} g</span>
                         <span class="ingredient-percent">(100%)</span>
@@ -256,6 +302,22 @@
                         <span class="ingredient-percent">(${recipe.yeast}%)</span>
                     </div>
                 </div>
+            `;
+
+            // 如果是佛卡夏配方，加入橄欖油
+            if (recipe.oliveOil) {
+                ingredientsHTML += `
+                <div class="recipe-item">
+                    <span class="ingredient-name">🫒 橄欖油</span>
+                    <div class="ingredient-value">
+                        <span class="ingredient-amount">${oliveOil} g</span>
+                        <span class="ingredient-percent">(${recipe.oliveOil}%)</span>
+                    </div>
+                </div>
+                `;
+            }
+
+            ingredientsHTML += `
                 <div class="recipe-item">
                     <span class="ingredient-name">📦 總重量</span>
                     <div class="ingredient-value">
@@ -263,6 +325,8 @@
                     </div>
                 </div>
             `;
+
+            calculationDiv.innerHTML = ingredientsHTML;
 
             resultDiv.classList.add('show');
         }
