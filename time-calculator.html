@@ -462,6 +462,22 @@
             setToday('workDate');
             setCurrentTime('sourceTime');
         });
+
+        // 頁面卸載時清理定時器
+        window.addEventListener('beforeunload', function() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        });
+
+        // 頁面隱藏時暫停定時器（省電）
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        });
     </script>
 </body>
 </html>

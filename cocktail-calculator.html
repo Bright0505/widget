@@ -17,23 +17,50 @@
 
         <!-- 調酒計算模式 -->
         <div id="mixingMode" class="calculator-mode active">
-            <form id="mixingForm">
+            <form id="mixingForm" aria-label="調酒計算表單">
                 <div class="form-group">
                     <label for="targetConcentration">目標酒精濃度</label>
-                    <input type="number" id="targetConcentration" step="0.1" min="0" max="100" required>
-                    <div class="unit">單位：百分比 (%) - 例如：9%</div>
+                    <input
+                        type="number"
+                        id="targetConcentration"
+                        step="0.1"
+                        min="0"
+                        max="100"
+                        required
+                        aria-label="目標酒精濃度"
+                        aria-describedby="targetConcentrationHelp"
+                        aria-invalid="false">
+                    <div class="unit" id="targetConcentrationHelp">單位：百分比 (%) - 例如：9%</div>
                 </div>
 
                 <div class="form-group">
                     <label for="totalVolume">總液體量</label>
-                    <input type="number" id="totalVolume" step="0.1" min="0" required>
-                    <div class="unit">單位：毫升 (ml) - 例如：250ml</div>
+                    <input
+                        type="number"
+                        id="totalVolume"
+                        step="0.1"
+                        min="0"
+                        required
+                        aria-label="總液體量"
+                        aria-describedby="totalVolumeHelp"
+                        aria-invalid="false">
+                    <div class="unit" id="totalVolumeHelp">單位：毫升 (ml) - 例如：250ml</div>
                 </div>
 
                 <div class="form-group">
                     <label for="alcoholConcentration">基酒濃度</label>
-                    <input type="number" id="alcoholConcentration" step="0.1" min="0" max="100" value="40" required>
-                    <div class="unit">單位：百分比 (%) - 例如：40% 伏特加</div>
+                    <input
+                        type="number"
+                        id="alcoholConcentration"
+                        step="0.1"
+                        min="0"
+                        max="100"
+                        value="40"
+                        required
+                        aria-label="基酒濃度"
+                        aria-describedby="alcoholConcentrationHelp"
+                        aria-invalid="false">
+                    <div class="unit" id="alcoholConcentrationHelp">單位：百分比 (%) - 例如：40% 伏特加</div>
                 </div>
 
                 <div id="liquidInputs">
@@ -55,10 +82,10 @@
                     <button type="button" id="addLiquidBtn" onclick="addLiquidInput()">➕ 新增輔料</button>
                 </div>
 
-                <button type="submit">🍸 計算需要多少酒精</button>
+                <button type="submit" aria-label="計算調酒所需酒精用量">🍸 計算需要多少酒精</button>
             </form>
 
-            <div id="mixingResult" class="result">
+            <div id="mixingResult" class="result" role="region" aria-live="polite" aria-label="計算結果">
                 <h3>🍹 調酒配方</h3>
                 <div id="mixingCalculation"></div>
             </div>
@@ -66,7 +93,7 @@
 
         <!-- 血液濃度計算模式 -->
         <div id="bacMode" class="calculator-mode">
-            <form id="bacForm">
+            <form id="bacForm" aria-label="血液酒精濃度計算表單">
                 <div class="form-group">
                     <label for="alcoholVolume">酒精飲料容量</label>
                     <input type="number" id="alcoholVolume" step="0.1" min="0" required>
@@ -162,17 +189,27 @@
             liquidInputs.appendChild(newInputGroup);
         }
 
-        function calculateMixing() {
+        // 智能四捨五入 - 優先顯示以 0 或 5 結尾的整數
+        function smartRound(value) {
+            const rounded = Math.round(value);
+            const rounded5 = Math.round(value / 5) * 5;
+            const rounded10 = Math.round(value / 10) * 10;
+
+            if (Math.abs(value - rounded10) / value <= 0.05) {
+                return rounded10;
+            } else if (Math.abs(value - rounded5) / value <= 0.03) {
+                return rounded5;
+            } else {
+                return rounded;
+            }
+        }
+
+        // 收集輸入數據
+        function collectInputData() {
             const targetConcentration = parseFloat(document.getElementById('targetConcentration').value);
             const totalVolume = parseFloat(document.getElementById('totalVolume').value);
             const alcoholConcentration = parseFloat(document.getElementById('alcoholConcentration').value);
 
-            if (isNaN(targetConcentration) || isNaN(totalVolume) || isNaN(alcoholConcentration)) {
-                alert('請填寫所有必要欄位');
-                return;
-            }
-
-            // 收集所有輔料的濃度和容量
             const additionalLiquids = [];
             let additionalVolume = 0;
 
@@ -194,86 +231,102 @@
                 }
             }
 
-            // 計算實際可用的總容量
-            const availableVolume = totalVolume - additionalVolume;
+            return {
+                targetConcentration,
+                totalVolume,
+                alcoholConcentration,
+                additionalLiquids,
+                additionalVolume
+            };
+        }
 
-            if (availableVolume <= 0) {
-                alert('輔料容量不能超過總液體量');
-                return;
+        // 顯示友善的錯誤訊息
+        function showError(message, fieldId) {
+            alert(`❌ ${message}`);
+            if (fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.focus();
+                    field.setAttribute('aria-invalid', 'true');
+                    setTimeout(() => field.setAttribute('aria-invalid', 'false'), 3000);
+                }
             }
+        }
 
-            if (targetConcentration > alcoholConcentration) {
-                alert('目標濃度不能高於使用的酒精濃度');
-                return;
-            }
+        // 驗證輸入數據
+        function validateInputs(data) {
+            const { targetConcentration, totalVolume, alcoholConcentration, additionalVolume } = data;
 
-            if (targetConcentration <= 0) {
-                alert('目標濃度必須大於 0');
-                return;
+            if (isNaN(targetConcentration) || isNaN(totalVolume) || isNaN(alcoholConcentration)) {
+                showError('請填寫所有必要欄位');
+                return false;
             }
 
             if (totalVolume <= 0) {
-                alert('總液體量必須大於 0');
-                return;
+                showError('總液體量必須大於 0', 'totalVolume');
+                return false;
             }
 
-            // 計算需要的酒精容量
-            // 公式：酒精容量 = (目標濃度 × 可用容量) ÷ 酒精濃度
+            if (targetConcentration <= 0) {
+                showError('目標濃度必須大於 0', 'targetConcentration');
+                return false;
+            }
+
+            if (targetConcentration > alcoholConcentration) {
+                showError(`目標濃度 (${targetConcentration}%) 不能高於基酒濃度 (${alcoholConcentration}%)`, 'targetConcentration');
+                return false;
+            }
+
+            const availableVolume = totalVolume - additionalVolume;
+            if (availableVolume <= 0) {
+                showError(`輔料容量 (${additionalVolume}ml) 不能超過總液體量 (${totalVolume}ml)`);
+                return false;
+            }
+
+            return true;
+        }
+
+        // 計算調酒結果
+        function performCalculation(data) {
+            const { targetConcentration, totalVolume, alcoholConcentration, additionalLiquids, additionalVolume } = data;
+            const availableVolume = totalVolume - additionalVolume;
+
             const alcoholVolumeRaw = (targetConcentration * availableVolume) / alcoholConcentration;
-
-            // 智能四捨五入 - 優先顯示以 0 或 5 結尾的整數
-            function smartRound(value) {
-                const rounded = Math.round(value);
-                const rounded5 = Math.round(value / 5) * 5;
-                const rounded10 = Math.round(value / 10) * 10;
-
-                // 如果原值和10的倍數差距在5%以內，優先顯示10的倍數
-                if (Math.abs(value - rounded10) / value <= 0.05) {
-                    return rounded10;
-                }
-                // 如果原值和5的倍數差距在3%以內，顯示5的倍數
-                else if (Math.abs(value - rounded5) / value <= 0.03) {
-                    return rounded5;
-                }
-                // 否則顯示四捨五入的整數
-                else {
-                    return rounded;
-                }
-            }
-
             const alcoholVolume = smartRound(alcoholVolumeRaw);
 
-            // 計算輔料液體的加權濃度（防止除以零）
-            const additionalConcentration = additionalVolume > 0
-                ? additionalLiquids.reduce((acc, liquid) => {
-                    return acc + (liquid.concentration * liquid.volume / additionalVolume);
-                }, 0)
-                : 0;
-
-            const nonAlcoholVolume = totalVolume - alcoholVolume - additionalVolume;
-
-            // 驗證結果
+            // 驗證計算結果
             if (alcoholVolume > totalVolume) {
-                alert('無法達成目標濃度，酒精用量超過總容量');
-                return;
+                showError(`無法達成目標濃度，需要 ${alcoholVolume}ml 酒精超過總容量 ${totalVolume}ml`);
+                return null;
             }
 
+            const nonAlcoholVolume = totalVolume - alcoholVolume - additionalVolume;
             if (alcoholVolume < 0 || nonAlcoholVolume < 0) {
-                alert('計算結果無效，請檢查輸入數值');
-                return;
+                showError('計算結果無效，請檢查輸入數值');
+                return null;
             }
 
             // 計算實際濃度
             const actualConcentration = (alcoholVolume * alcoholConcentration) / totalVolume;
 
-            // 準備輔料詳細資訊
+            return {
+                alcoholVolume,
+                alcoholVolumeRaw,
+                nonAlcoholVolume,
+                actualConcentration
+            };
+        }
+
+        // 生成結果 HTML
+        function generateResultHTML(data, result) {
+            const { targetConcentration, totalVolume, alcoholConcentration, additionalLiquids, additionalVolume } = data;
+            const { alcoholVolume, alcoholVolumeRaw, actualConcentration } = result;
+
             const additionalLiquidDetails = additionalLiquids.map(liquid =>
                 `${liquid.volume} ml ${liquid.concentration}% 輔料`
             ).join('、');
 
-            // 顯示結果
-            const resultDiv = document.getElementById('mixingCalculation');
-            resultDiv.innerHTML = `
+            return `
                 <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); padding: 20px; border-radius: 15px; margin: 15px 0; color: white;">
                     <h4 style="color: white; margin-bottom: 20px; text-align: center;">🍹 完美調酒配方</h4>
 
@@ -339,7 +392,27 @@
                     </div>
                 </div>
             `;
+        }
 
+        // 主函數：調酒計算
+        function calculateMixing() {
+            // 1. 收集輸入數據
+            const inputData = collectInputData();
+
+            // 2. 驗證輸入
+            if (!validateInputs(inputData)) {
+                return;
+            }
+
+            // 3. 計算結果
+            const calculationResult = performCalculation(inputData);
+            if (!calculationResult) {
+                return;
+            }
+
+            // 4. 生成並顯示結果
+            const resultHTML = generateResultHTML(inputData, calculationResult);
+            document.getElementById('mixingCalculation').innerHTML = resultHTML;
             document.getElementById('mixingResult').classList.add('show');
         }
 
