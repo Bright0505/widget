@@ -243,10 +243,12 @@
 
             const alcoholVolume = smartRound(alcoholVolumeRaw);
 
-            // 計算輔料液體的加權濃度
-            const additionalConcentration = additionalLiquids.reduce((acc, liquid) => {
-                return acc + (liquid.concentration * liquid.volume / additionalVolume);
-            }, 0);
+            // 計算輔料液體的加權濃度（防止除以零）
+            const additionalConcentration = additionalVolume > 0
+                ? additionalLiquids.reduce((acc, liquid) => {
+                    return acc + (liquid.concentration * liquid.volume / additionalVolume);
+                }, 0)
+                : 0;
 
             const nonAlcoholVolume = totalVolume - alcoholVolume - additionalVolume;
 

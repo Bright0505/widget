@@ -75,6 +75,17 @@
         let products = [];
         let nextId = 1;
 
+        // HTML 轉義函數 - 防止 XSS 攻擊
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         // 單位選項定義
         const unitOptions = {
             volume: {
@@ -260,8 +271,8 @@
 
                 html += typeProducts.map(product => `
                     <div class="product-card ${product.id === bestDeal.id ? 'best-deal' : ''}">
-                        <div class="product-name">${product.name}</div>
-                        
+                        <div class="product-name">${escapeHtml(product.name)}</div>
+
                         <div class="product-details">
                             <div class="detail-item">
                                 <div class="detail-label">售價</div>
