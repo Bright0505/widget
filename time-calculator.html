@@ -16,10 +16,10 @@
         <div class="main-content">
             <!-- 模式選擇 -->
             <div class="mode-selector">
-                <button type="button" class="mode-btn active" onclick="switchMode('diff')">時間差</button>
-                <button type="button" class="mode-btn" onclick="switchMode('work')">工時</button>
-                <button type="button" class="mode-btn" onclick="switchMode('countdown')">倒數</button>
-                <button type="button" class="mode-btn" onclick="switchMode('timezone')">時區</button>
+                <button type="button" class="mode-btn active" onclick="switchMode('diff', this)">時間差</button>
+                <button type="button" class="mode-btn" onclick="switchMode('work', this)">工時</button>
+                <button type="button" class="mode-btn" onclick="switchMode('countdown', this)">倒數</button>
+                <button type="button" class="mode-btn" onclick="switchMode('timezone', this)">時區</button>
             </div>
 
             <!-- 時間差計算 -->
@@ -165,9 +165,9 @@
         let countdownInterval = null;
 
         // 模式切換
-        function switchMode(mode) {
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        function switchMode(mode, btn) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
             document.querySelectorAll('.calculator-mode').forEach(div => div.classList.remove('active'));
             document.getElementById(mode + 'Mode').classList.add('active');
