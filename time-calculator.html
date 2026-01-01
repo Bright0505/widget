@@ -16,10 +16,10 @@
         <div class="main-content">
             <!-- 模式選擇 -->
             <div class="mode-selector">
-                <button type="button" class="mode-btn active" onclick="switchMode('diff')">時間差</button>
-                <button type="button" class="mode-btn" onclick="switchMode('work')">工時</button>
-                <button type="button" class="mode-btn" onclick="switchMode('countdown')">倒數</button>
-                <button type="button" class="mode-btn" onclick="switchMode('timezone')">時區</button>
+                <button type="button" class="mode-btn active" onclick="switchMode('diff', this)">時間差</button>
+                <button type="button" class="mode-btn" onclick="switchMode('work', this)">工時</button>
+                <button type="button" class="mode-btn" onclick="switchMode('countdown', this)">倒數</button>
+                <button type="button" class="mode-btn" onclick="switchMode('timezone', this)">時區</button>
             </div>
 
             <!-- 時間差計算 -->
@@ -164,10 +164,21 @@
     <script>
         let countdownInterval = null;
 
+        // HTML 轉義函數 - 防止 XSS 攻擊
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         // 模式切換
-        function switchMode(mode) {
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        function switchMode(mode, btn) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
             document.querySelectorAll('.calculator-mode').forEach(div => div.classList.remove('active'));
             document.getElementById(mode + 'Mode').classList.add('active');
@@ -325,7 +336,7 @@
                 clearInterval(countdownInterval);
                 document.getElementById('countdownDisplay').innerHTML = `
                     <div class="countdown-display">
-                        <div class="countdown-label">${label}</div>
+                        <div class="countdown-label">${escapeHtml(label)}</div>
                         <div class="countdown-time">🎉 時間到！</div>
                     </div>`;
                 return;
@@ -334,7 +345,7 @@
             const result = formatTimeDifference(diff);
             document.getElementById('countdownDisplay').innerHTML = `
                 <div class="countdown-display">
-                    <div class="countdown-label">距離 ${label} 還有</div>
+                    <div class="countdown-label">距離 ${escapeHtml(label)} 還有</div>
                     <div class="countdown-time">${result}</div>
                 </div>`;
         }
@@ -450,6 +461,22 @@
             setCurrentTime('startDateTime');
             setToday('workDate');
             setCurrentTime('sourceTime');
+        });
+
+        // 頁面卸載時清理定時器
+        window.addEventListener('beforeunload', function() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        });
+
+        // 頁面隱藏時暫停定時器（省電）
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
         });
     </script>
 </body>

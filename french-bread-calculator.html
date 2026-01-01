@@ -105,9 +105,9 @@
         <h1>🥖 法國麵包配方計算器</h1>
 
         <div class="mode-selector">
-            <button type="button" class="mode-btn active" onclick="switchRecipe('t55')">T55 長棍</button>
-            <button type="button" class="mode-btn" onclick="switchRecipe('t65')">T65 鄉村</button>
-            <button type="button" class="mode-btn" onclick="switchRecipe('focaccia')">🫓 佛卡夏</button>
+            <button type="button" class="mode-btn active" onclick="switchRecipe('t55', this)">T55 長棍</button>
+            <button type="button" class="mode-btn" onclick="switchRecipe('t65', this)">T65 鄉村</button>
+            <button type="button" class="mode-btn" onclick="switchRecipe('focaccia', this)">🫓 佛卡夏</button>
         </div>
 
         <!-- T55 配方 -->
@@ -227,12 +227,12 @@
         };
 
         // 切換配方
-        function switchRecipe(recipeType) {
+        function switchRecipe(recipeType, btn) {
             // 更新按鈕狀態
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                b.classList.remove('active');
             });
-            event.target.classList.add('active');
+            btn.classList.add('active');
 
             // 切換顯示的模式
             document.querySelectorAll('.calculator-mode').forEach(mode => {
