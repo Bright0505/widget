@@ -15,31 +15,31 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 15px 20px;
+    padding: 16px 20px;
 }
 
 /* 針對具體頁面的body調整 */
 .page-cocktail body,
 .page-price body,
 .page-time body {
-    padding: 10px 20px 20px 20px;
+    padding: 8px 20px 20px 20px;
 }
 
 /* === 容器樣式 === */
 .container {
     background: white;
-    border-radius: 15px;
+    border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 20px;
     max-width: 100%;
     width: 100%;
-    margin: 10px 10px 0 10px;
+    margin: 8px 8px 0 8px;
 }
 
 /* 針對比價和時間計算器的特殊容器 */
 .page-price .container,
 .page-time .container {
-    margin: 0 10px;
+    margin: 0 8px;
     overflow: hidden;
     padding: 0;
 }
@@ -50,6 +50,14 @@ h1 {
     color: #333;
     margin-bottom: 8px;
     font-size: 2rem;
+    font-weight: 700;
+}
+
+h2 {
+    text-align: left;
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 1.5rem;
     font-weight: 700;
 }
 
@@ -68,7 +76,7 @@ h1 {
 
 label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     color: #555;
     font-weight: 600;
     font-size: 1rem;
@@ -165,7 +173,7 @@ button:active {
     background: #6b7280;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 8px;
     font-size: 0.875rem;
     cursor: pointer;
@@ -185,9 +193,9 @@ button:active {
 .mode-selector {
     display: flex;
     background: #f1f3f4;
-    border-radius: 10px;
-    padding: 5px;
-    margin-bottom: 30px;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 32px;
 }
 
 .mode-btn {
@@ -218,7 +226,7 @@ button:active {
 }
 
 .page-time .mode-btn {
-    padding: 10px 8px;
+    padding: 8px;
     font-size: 0.875rem;
 }
 
@@ -239,8 +247,8 @@ button:active {
 .result {
     background: #f8f9fa;
     border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
+    padding: 16px;
+    margin-top: 16px;
     text-align: center;
     display: none;
 }
@@ -267,8 +275,8 @@ button:active {
 .widget-grid {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .widget-card {
@@ -282,7 +290,7 @@ button:active {
     overflow: hidden;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
 }
 
 .widget-card:hover {
@@ -361,8 +369,8 @@ button:active {
 
 .back-link {
     text-align: center;
-    margin-top: 25px;
-    padding-top: 15px;
+    margin-top: 24px;
+    padding-top: 16px;
     border-top: 1px solid #eee;
 }
 
@@ -446,14 +454,14 @@ button:active {
 .products-grid {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 
 .product-card {
     background: white;
     border: 2px solid #e1e5e9;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 16px;
     transition: all 0.3s ease;
     position: relative;
 }
@@ -494,7 +502,7 @@ button:active {
     text-align: center;
     padding: 8px;
     background: #f8f9fa;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .detail-label {
@@ -579,29 +587,29 @@ button:active {
 .time-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
 }
 
 .quick-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin: 10px 0;
+    margin: 8px 0;
 }
 
 .countdown-display {
     background: #374151;
     color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 20px;
     text-align: center;
-    margin: 15px 0;
+    margin: 16px 0;
 }
 
 .countdown-time {
     font-size: 2rem;
     font-weight: 700;
-    margin: 10px 0;
+    margin: 8px 0;
 }
 
 .countdown-label {
@@ -612,8 +620,8 @@ button:active {
 .timezone-result {
     background: #e8f4fd;
     border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
+    padding: 16px;
+    margin: 8px 0;
 }
 
 .timezone-item {
@@ -644,4 +652,154 @@ button:active {
     color: #333;
     margin-bottom: 12px;
     font-size: 1.5rem;
+}
+
+/* === 調酒計算器特殊樣式 === */
+.cocktail-result-container {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 16px 0;
+    color: white;
+}
+
+.cocktail-result-title {
+    color: white;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.cocktail-alcohol-needed {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.cocktail-alcohol-label {
+    font-size: 1.125rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.cocktail-alcohol-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #374151;
+    margin: 8px 0;
+}
+
+.cocktail-alcohol-ratio {
+    color: #888;
+    font-size: 0.875rem;
+}
+
+.cocktail-adjustment-note {
+    background: #fff3cd;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 8px;
+    color: #856404;
+    font-size: 0.875rem;
+}
+
+.cocktail-recipe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.cocktail-recipe-item {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 16px;
+    border-radius: 12px;
+    color: #333;
+    text-align: center;
+}
+
+.cocktail-recipe-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.cocktail-recipe-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 1rem;
+}
+
+.cocktail-recipe-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #374151;
+}
+
+.cocktail-additional-details {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.cocktail-additional-title {
+    font-size: 1.125rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.cocktail-additional-content {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #333;
+}
+
+.cocktail-final-result {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: #333;
+}
+
+.cocktail-final-title {
+    font-size: 1.125rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.cocktail-final-values {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.cocktail-final-divider {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.cocktail-final-alcohol {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.cocktail-tips {
+    background: rgba(5, 150, 105, 0.15);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border-left: 4px solid #059669;
+}
+
+.cocktail-tips-content {
+    font-size: 0.875rem;
+    color: white;
+    line-height: 1.6;
 }

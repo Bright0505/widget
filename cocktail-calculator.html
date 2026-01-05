@@ -131,8 +131,11 @@
         </div>
 
         <div class="note">
-            ⚠️ 此計算器僅供參考，實際酒精濃度受多種因素影響。請勿酒駕，珍愛生命。<br>
-            🔗 <a href="index.html" style="color: #667eea; text-decoration: none;">返回 Widget 工具集首頁</a>
+            ⚠️ 此計算器僅供參考，實際酒精濃度受多種因素影響。請勿酒駕，珍愛生命。
+        </div>
+
+        <div class="back-link">
+            🔗 <a href="index.html">返回 Widget 工具集首頁</a>
         </div>
     </div>
 
@@ -327,63 +330,63 @@
             ).join('、');
 
             return `
-                <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); padding: 20px; border-radius: 15px; margin: 15px 0; color: white;">
-                    <h4 style="color: white; margin-bottom: 20px; text-align: center;">🍹 完美調酒配方</h4>
+                <div class="cocktail-result-container">
+                    <h4 class="cocktail-result-title">🍹 完美調酒配方</h4>
 
                     <!-- 主要結果 - 酒精用量 -->
-                    <div style="background: rgba(255,255,255,0.95); padding: 25px; border-radius: 12px; margin-bottom: 20px; color: #333;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 1.2em; color: #666; margin-bottom: 8px;">🥃 需要酒精 (${alcoholConcentration}%)</div>
-                            <div style="font-size: 3em; font-weight: 700; color: #ff6b6b; margin: 10px 0;">${alcoholVolume} ml</div>
-                            <div style="color: #888; font-size: 0.9em;">約 ${((alcoholVolume / totalVolume) * 100).toFixed(0)}% 比例</div>
-                            ${Math.abs(alcoholVolumeRaw - alcoholVolume) > 0.5 ?
-                                `<div style="background: #fff3cd; padding: 8px; border-radius: 6px; margin-top: 10px; color: #856404; font-size: 0.85em;">
-                                    💡 為便於測量已調整為 ${alcoholVolume}ml (原計算值: ${alcoholVolumeRaw.toFixed(1)}ml)
-                                </div>` : ''
-                            }
-                        </div>
+                    <div class="cocktail-alcohol-needed">
+                        <div class="cocktail-alcohol-label">🥃 需要酒精 (${alcoholConcentration}%)</div>
+                        <div class="cocktail-alcohol-value">${alcoholVolume} ml</div>
+                        <div class="cocktail-alcohol-ratio">約 ${((alcoholVolume / totalVolume) * 100).toFixed(0)}% 比例</div>
+                        ${Math.abs(alcoholVolumeRaw - alcoholVolume) > 0.5 ?
+                            `<div class="cocktail-adjustment-note">
+                                💡 為便於測量已調整為 ${alcoholVolume}ml (原計算值: ${alcoholVolumeRaw.toFixed(1)}ml)
+                            </div>` : ''
+                        }
                     </div>
 
                     <!-- 詳細配方 -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
-                            <div style="font-size: 1.5em; margin-bottom: 8px;">🍺</div>
-                            <div style="font-weight: 600; margin-bottom: 5px;">酒精 (${alcoholConcentration}%)</div>
-                            <div style="font-size: 1.4em; font-weight: 700; color: #ff6b6b;">${alcoholVolume} ml</div>
+                    <div class="cocktail-recipe-grid">
+                        <div class="cocktail-recipe-item">
+                            <div class="cocktail-recipe-emoji">🍺</div>
+                            <div class="cocktail-recipe-label">酒精 (${alcoholConcentration}%)</div>
+                            <div class="cocktail-recipe-value">${alcoholVolume} ml</div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.9); padding: 18px; border-radius: 10px; color: #333; text-align: center;">
-                            <div style="font-size: 1.5em; margin-bottom: 8px;">🧊</div>
-                            <div style="font-weight: 600; margin-bottom: 5px;">輔料</div>
-                            <div style="font-size: 1.4em; font-weight: 700; color: #42a5f5;">${additionalVolume} ml</div>
+                        <div class="cocktail-recipe-item">
+                            <div class="cocktail-recipe-emoji">🧊</div>
+                            <div class="cocktail-recipe-label">輔料</div>
+                            <div class="cocktail-recipe-value">${additionalVolume} ml</div>
                         </div>
                     </div>
 
                     <!-- 輔料詳細資訊 -->
                     ${additionalLiquids.length > 0 ? `
-                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-bottom: 20px; color: #333;">
-                        <div style="font-size: 1.1em; color: #666; margin-bottom: 8px;">🍹 輔料明細</div>
-                        <div style="font-weight: 700; font-size: 1em; color: #333;">
+                    <div class="cocktail-additional-details">
+                        <div class="cocktail-additional-title">🍹 輔料明細</div>
+                        <div class="cocktail-additional-content">
                             ${additionalLiquidDetails}
                         </div>
                     </div>` : ''}
 
                     <!-- 最終結果卡片 -->
-                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; text-align: center; color: #333;">
-                        <div style="font-size: 1.1em; color: #666; margin-bottom: 8px;">🎯 調酒結果</div>
-                        <div style="font-weight: 700; font-size: 1.3em; color: #333;">
+                    <div class="cocktail-final-result">
+                        <div class="cocktail-final-title">🎯 調酒結果</div>
+                        <div class="cocktail-final-values">
                             總容量: ${totalVolume} ml | 實際濃度: ${actualConcentration.toFixed(1)}%
                             ${Math.abs(actualConcentration - targetConcentration) > 0.1 ?
                                 ` (目標: ${targetConcentration}%)` : ''
                             }
                         </div>
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; color: #666; font-size: 0.9em;">
-                            純酒精含量: ${(alcoholVolume * alcoholConcentration / 100).toFixed(0)} ml
+                        <div class="cocktail-final-divider">
+                            <div class="cocktail-final-alcohol">
+                                純酒精含量: ${(alcoholVolume * alcoholConcentration / 100).toFixed(0)} ml
+                            </div>
                         </div>
                     </div>
 
                     <!-- 調酒提示 -->
-                    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #4caf50;">
-                        <div style="font-size: 0.95em; color: white; line-height: 1.4;">
+                    <div class="cocktail-tips">
+                        <div class="cocktail-tips-content">
                             🍸 <strong>調酒技巧：</strong><br>
                             1. 先加入 ${alcoholVolume}ml 的 ${alcoholConcentration}% 酒精<br>
                             2. 再加入 ${additionalLiquids.map(l => `${l.volume}ml ${l.concentration}% 輔料`).join('、')}<br>
