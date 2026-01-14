@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>按鈕樣式測試</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 法國麵包專屬樣式 - 複製自 french-bread-calculator.html */
+        .page-bread button {
+            background: #374151;
+        }
+
+        .page-bread button:hover {
+            background: #1f2937;
+        }
+
+        .page-bread .mode-btn.active {
+            background: white !important;
+            color: #374151;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-bread .mode-btn {
+            background: transparent;
+            color: #4b5563;
+        }
+
+        /* 測試樣式 */
+        .test-info {
+            background: #f0f0f0;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 8px;
+        }
+
+        .test-section {
+            margin-bottom: 32px;
+            padding: 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="page-bread">
+    <div class="container">
+        <h1>🧪 按鈕樣式測試</h1>
+
+        <div class="test-info">
+            <h3>測試目的</h3>
+            <p>驗證 CSS 優先級和按鈕狀態顯示</p>
+        </div>
+
+        <!-- 測試 1: 原始模式選擇器 -->
+        <div class="test-section">
+            <h3>測試 1: 模式選擇器（原始結構）</h3>
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" onclick="test1Switch(this, 1)">按鈕 1</button>
+                <button type="button" class="mode-btn" onclick="test1Switch(this, 2)">按鈕 2</button>
+                <button type="button" class="mode-btn" onclick="test1Switch(this, 3)">按鈕 3</button>
+            </div>
+            <div class="test-info">
+                <p><strong>預期效果：</strong></p>
+                <ul>
+                    <li>active 按鈕：白色背景 + 深灰文字</li>
+                    <li>非 active 按鈕：透明背景 + 灰色文字</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 測試 2: 檢視計算後的樣式 -->
+        <div class="test-section">
+            <h3>測試 2: 計算後的樣式檢視</h3>
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" id="testBtn1">Active 按鈕</button>
+                <button type="button" class="mode-btn" id="testBtn2">Normal 按鈕</button>
+            </div>
+            <div class="test-info">
+                <button type="button" onclick="checkStyles()">檢查樣式</button>
+                <pre id="styleOutput" style="background: white; padding: 16px; margin-top: 8px; border-radius: 4px; overflow-x: auto;"></pre>
+            </div>
+        </div>
+
+        <!-- 測試 3: CSS 特定性測試 -->
+        <div class="test-section">
+            <h3>測試 3: CSS 特定性測試</h3>
+            <div class="test-info">
+                <h4>CSS 選擇器特定性計算：</h4>
+                <ul style="font-family: monospace; font-size: 0.9rem;">
+                    <li><code>button</code> = (0,0,1) = 1</li>
+                    <li><code>.mode-btn</code> = (0,1,0) = 10</li>
+                    <li><code>.mode-btn.active</code> = (0,2,0) = 20</li>
+                    <li><code>.page-bread button</code> = (0,1,1) = 11</li>
+                    <li><code>.page-bread .mode-btn</code> = (0,2,0) = 20</li>
+                    <li><code>.page-bread .mode-btn.active</code> = (0,3,0) = 30 + !important</li>
+                </ul>
+                <p><strong>理論上的優先級順序（從高到低）：</strong></p>
+                <ol>
+                    <li>.page-bread .mode-btn.active (30 + !important)</li>
+                    <li>.page-bread .mode-btn (20)</li>
+                    <li>.mode-btn.active (20) - 但在外部樣式表，優先級低於內嵌樣式</li>
+                    <li>.page-bread button (11)</li>
+                    <li>.mode-btn (10)</li>
+                    <li>button (1)</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="french-bread-calculator.html">← 返回法國麵包配方計算器</a>
+        </div>
+    </div>
+
+    <script>
+        function test1Switch(btn, num) {
+            console.log('切換按鈕:', num);
+            console.log('點擊前的 classes:', btn.className);
+
+            // 移除所有 active
+            document.querySelectorAll('.test-section:first-of-type .mode-btn').forEach(b => {
+                console.log('移除 active from:', b.textContent, 'classes before:', b.className);
+                b.classList.remove('active');
+                console.log('classes after:', b.className);
+            });
+
+            // 添加 active
+            btn.classList.add('active');
+            console.log('點擊後的 classes:', btn.className);
+
+            // 立即檢查樣式
+            const computed = window.getComputedStyle(btn);
+            console.log('計算後的背景色:', computed.backgroundColor);
+            console.log('計算後的文字顏色:', computed.color);
+        }
+
+        function checkStyles() {
+            const btn1 = document.getElementById('testBtn1');
+            const btn2 = document.getElementById('testBtn2');
+
+            const style1 = window.getComputedStyle(btn1);
+            const style2 = window.getComputedStyle(btn2);
+
+            const output = `
+【Active 按鈕 (testBtn1)】
+Classes: ${btn1.className}
+Background: ${style1.backgroundColor}
+Color: ${style1.color}
+Box-shadow: ${style1.boxShadow}
+
+【Normal 按鈕 (testBtn2)】
+Classes: ${btn2.className}
+Background: ${style2.backgroundColor}
+Color: ${style2.color}
+Box-shadow: ${style2.boxShadow}
+            `.trim();
+
+            document.getElementById('styleOutput').textContent = output;
+            console.log(output);
+        }
+
+        // 頁面載入時自動檢查
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('=== 頁面載入完成，檢查初始樣式 ===');
+            checkStyles();
+        });
+    </script>
+</body>
+</html>

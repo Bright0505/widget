@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         /* 法國麵包專屬樣式 */
-        .page-bread button {
+        /* 只套用到提交按鈕，不影響 mode-btn */
+        .page-bread button[type="submit"] {
             background: #374151;
         }
 
-        .page-bread button:hover {
+        .page-bread button[type="submit"]:hover {
             background: #1f2937;
         }
 
@@ -19,15 +20,22 @@
             border-color: #374151;
         }
 
-        .page-bread .mode-btn.active {
+        /* 模式選擇按鈕樣式 - 提高優先級並明確定義 */
+        .page-bread .mode-selector .mode-btn {
+            background: transparent !important;
+            color: #4b5563 !important;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .page-bread .mode-selector .mode-btn.active {
             background: white !important;
-            color: #374151;
+            color: #374151 !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .page-bread .mode-btn {
-            background: transparent;
-            color: #4b5563;
+        .page-bread .mode-selector .mode-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.5) !important;
         }
 
         .page-bread .result-value {
