@@ -172,8 +172,8 @@ html, body {
 
 /* ===== Home ===== */
 .home-pad {
-  padding: max(68px, calc(env(safe-area-inset-top) + 6px)) 22px calc(100px + env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; gap: 24px;
+  padding: max(20px, calc(env(safe-area-inset-top) + 12px)) 20px calc(80px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 20px;
 }
 .home-greet {
   display: flex; flex-direction: column; gap: 6px;
@@ -233,7 +233,7 @@ html, body {
 }
 .tool-card:active { transform: scale(.98); }
 .tool-card.large { aspect-ratio: 1 / 1.18; }
-.tool-card.small { padding: 16px; border-radius: var(--radius-md); min-height: 114px; }
+.tool-card.small { padding: 16px; border-radius: var(--radius-md); min-height: 114px; height: 100%; box-sizing: border-box; }
 
 .tool-card .label-en {
   font-family: var(--serif-en);
