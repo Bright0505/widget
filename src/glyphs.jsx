@@ -58,5 +58,13 @@ export const Glyph = ({ size = 38, stroke = 1.4, name = 'bread', color = 'curren
       </svg>
     );
   }
+  if (name === 'share') {
+    return (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
+        <path d="M12 3v11M8 7l4-4 4 4" stroke={color} strokeWidth={stroke + .2} strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5 17v2a1 1 0 001 1h12a1 1 0 001-1v-2" stroke={color} strokeWidth={stroke} strokeLinecap="round"/>
+      </svg>
+    );
+  }
   return null;
 };

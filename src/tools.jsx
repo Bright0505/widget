@@ -1,6 +1,7 @@
 import React from 'react'
 import { Glyph } from './glyphs'
 import { StarIcon } from './home'
+import { ShareModal } from './share'
 
 const RECIPES = {
   t55: { name: 'T55 長棍', short: 'T55', water: 70, salt: 2, yeast: 1,
@@ -126,7 +127,7 @@ function smartRound(v) {
   return r;
 }
 
-export function CocktailScreen({ onBack, store }) {
+export function CocktailScreen({ onBack, store, initialShare }) {
   const isFav = store.favorites.includes('cocktail');
   const onToggleFav = () => store.toggleFav('cocktail');
   const [mode, setMode] = React.useState('mixing');
@@ -150,17 +151,19 @@ export function CocktailScreen({ onBack, store }) {
           <button className={mode === 'mixing' ? 'on' : ''} onClick={() => setMode('mixing')}>調酒配方</button>
           <button className={mode === 'bac' ? 'on' : ''} onClick={() => setMode('bac')}>血液濃度</button>
         </div>
-        {mode === 'mixing' ? <CocktailMixing/> : <CocktailBAC/>}
+        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare}/> : <CocktailBAC/>}
       </div>
     </div>
   );
 }
 
-function CocktailMixing() {
-  const [target, setTarget] = React.useState('9');
-  const [total, setTotal] = React.useState('250');
-  const [base, setBase] = React.useState('40');
-  const [aux, setAux] = React.useState([{ conc: '', vol: '' }]);
+function CocktailMixing({ initialShare }) {
+  const init = initialShare?.m === 'mixing' ? initialShare : null;
+  const [target, setTarget] = React.useState(init?.target ?? '9');
+  const [total, setTotal] = React.useState(init?.total ?? '250');
+  const [base, setBase] = React.useState(init?.base ?? '40');
+  const [aux, setAux] = React.useState(init?.aux ?? [{ conc: '', vol: '' }]);
+  const [showShare, setShowShare] = React.useState(false);
 
   const tConc = parseFloat(target) || 0;
   const tVol = parseFloat(total) || 0;
@@ -281,6 +284,18 @@ function CocktailMixing() {
       )}
 
       <div className="note-line">⚠️ 此計算器僅供參考。請勿酒駕，珍愛生命。</div>
+
+      {valid && (
+        <button className="btn-share" onClick={() => setShowShare(true)}>
+          <Glyph name="share" size={16}/> 分享配方
+        </button>
+      )}
+      {showShare && (
+        <ShareModal
+          data={{ t: 'cocktail', m: 'mixing', target, total, base, aux }}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </>
   );
 }
@@ -381,10 +396,23 @@ const UNIT_OPTIONS = {
 const UNIT_CONV = { ml:1, l:1000, 'fl oz':29.5735, g:1, kg:1000, '台斤':600, '市斤':500, '磅':453.592 };
 const UNIT_TYPE_LABEL = { volume:'容量類', weight:'重量類', package:'包裝類' };
 
-export function PriceScreen({ onBack, store }) {
+export function PriceScreen({ onBack, store, initialShare }) {
   const isFav = store.favorites.includes('price');
   const onToggleFav = () => store.toggleFav('price');
-  const [products, setProducts] = React.useState([]);
+  const [showShare, setShowShare] = React.useState(false);
+  const [products, setProducts] = React.useState(() => {
+    if (!initialShare?.products?.length) return [];
+    return initialShare.products.map((p, i) => {
+      const conv = UNIT_CONV[p.unit] || 1;
+      const standardQty = p.qty * conv;
+      return {
+        id: Date.now() + i, name: p.name, price: p.price, qty: p.qty, unit: p.unit, type: p.type,
+        unitPrice: p.price / p.qty,
+        standardUnitPrice: p.price / standardQty,
+        standardUnit: p.type === 'volume' ? 'ml' : p.type === 'weight' ? 'g' : p.unit,
+      };
+    });
+  });
   const [name, setName] = React.useState('');
   const [price, setPrice] = React.useState('');
   const [qty, setQty] = React.useState('');
@@ -467,7 +495,20 @@ export function PriceScreen({ onBack, store }) {
         </div>
 
         <div>
-          <div className="section-h"><span className="en">Compare</span><span className="tc">比較結果</span></div>
+          <div className="section-h">
+            <span className="en">Compare</span><span className="tc">比較結果</span>
+            {products.length > 0 && (
+              <button className="btn-share-sm" onClick={() => setShowShare(true)}>
+                <Glyph name="share" size={13}/> 分享
+              </button>
+            )}
+          </div>
+          {showShare && (
+            <ShareModal
+              data={{ t: 'price', products: products.map(p => ({ name: p.name, price: p.price, qty: p.qty, unit: p.unit, type: p.type })) }}
+              onClose={() => setShowShare(false)}
+            />
+          )}
           {products.length === 0 && (
             <div className="empty-state">
               <div className="e-en">Empty</div>
