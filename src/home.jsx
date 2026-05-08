@@ -79,7 +79,7 @@ export function Home({ onPick, layout = 'mixed', store }) {
 
   return (
     <div className="app-scroll">
-      <div className="home-pad">
+      <div className="home-header">
         <div className="home-greet">
           <div className="home-date">{fmtDate()}</div>
           <h1 className="home-hello">{greet}，<br/>今天想做<em>什麼</em>？</h1>
@@ -91,7 +91,9 @@ export function Home({ onPick, layout = 'mixed', store }) {
             最近使用 {history.length > 0 ? `· ${history.length}` : ''}
           </button>
         </div>
+      </div>
 
+      <div className="home-body">
         {tab === 'tools' && <>
           {favTools.length > 0 && (
             <div>
@@ -214,3 +216,4 @@ export function Home({ onPick, layout = 'mixed', store }) {
     </div>
   );
 }
+
