@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="42" fill="#FAFAF7"></rect>
+  <circle cx="96" cy="80" r="28" fill="#C2683C"></circle>
+  <text x="96" y="148" text-anchor="middle" font-family="serif" font-size="28" font-weight="500" fill="#1A1A1A">小工具</text>
+</svg>

@@ -1,76 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widget 工具集 | 實用小工具合集</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#FAFAF7">
+  <title>生活小工具 — App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="apple-mobile-web-app-title" content="小工具">
+  <link rel="apple-touch-icon" href="/icon-192.svg">
 </head>
 <body>
-    <div class="container">
-        <h1>🛠️ Widget 工具集</h1>
-        <div class="subtitle">實用小工具合集，讓生活更便利</div>
-        
-        <div class="widget-grid">
-            <!-- 調酒計算器 -->
-            <a href="cocktail-calculator.html" class="widget-card">
-                <span class="widget-icon">🍸</span>
-                <div class="widget-content">
-                    <div class="widget-title">調酒計算器</div>
-                    <div class="widget-description">
-                        精確計算調酒所需的酒精用量
-                    </div>
-                </div>
-            </a>
-
-            <!-- 比價計算器 -->
-            <a href="price-calculator.html" class="widget-card">
-                <span class="widget-icon">🛒</span>
-                <div class="widget-content">
-                    <div class="widget-title">比價計算器</div>
-                    <div class="widget-description">
-                        比較不同產品的單位價格
-                    </div>
-                </div>
-            </a>
-
-            <!-- 時間計算器 -->
-            <a href="time-calculator.html" class="widget-card">
-                <span class="widget-icon">⏰</span>
-                <div class="widget-content">
-                    <div class="widget-title">時間計算器</div>
-                    <div class="widget-description">
-                        時間差計算、工時統計、倒數計時
-                    </div>
-                </div>
-            </a>
-
-            <!-- 法國麵包配方計算器 -->
-            <a href="french-bread-calculator.html" class="widget-card">
-                <span class="widget-icon">🥖</span>
-                <div class="widget-content">
-                    <div class="widget-title">法國麵包配方計算器</div>
-                    <div class="widget-description">
-                        T55/T65 配方，自動計算材料用量
-                    </div>
-                </div>
-            </a>
-
-            <div class="widget-card coming-soon">
-                <span class="widget-icon">💰</span>
-                <div class="widget-content">
-                    <div class="widget-title">匯率計算器</div>
-                    <div class="widget-description">
-                        <em>即將推出...</em>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>✨ 持續更新中，更多實用工具敬請期待</p>
-            <p>🚀 部署於 GitHub Pages | <a href="https://github.com" class="github-link">查看源碼</a></p>
-        </div>
-    </div>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

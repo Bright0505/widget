@@ -4,7 +4,7 @@
 
 ## 🚀 線上體驗
 
-部署在 GitHub Pages：[查看線上版本](https://your-username.github.io/widget)
+部署在 GitHub Pages：[https://widget.9438.life](https://widget.9438.life)
 
 ## 📱 已實作功能
 
@@ -57,26 +57,50 @@
 
 ```
 widget/
-├── index.html                      # 主頁 - 工具集首頁
-├── cocktail-calculator.html        # 調酒計算器
-├── price-calculator.html           # 比價計算器
-├── time-calculator.html            # 時間計算器
-├── french-bread-calculator.html    # 法國麵包配方計算器
-└── README.md                       # 專案說明文件
+├── index.html                      # React SPA 入口（Vite）
+├── app.css                         # 全域設計系統 CSS
+├── vite.config.js                  # Vite + PWA 設定
+├── package.json
+├── src/
+│   ├── main.jsx                    # Vite 入口點
+│   ├── app.jsx                     # App shell、畫面導覽
+│   ├── home.jsx                    # 首頁、工具列表
+│   ├── tools.jsx                   # 三個工具畫面
+│   ├── glyphs.jsx                  # SVG icon 元件
+│   ├── history.jsx                 # localStorage store
+│   ├── ios-frame.jsx               # iOS device frame（桌機預覽）
+│   └── tweaks-panel.jsx            # 設計微調面板
+├── public/
+│   ├── CNAME                       # 自訂網域
+│   ├── icon-192.svg
+│   └── icon-512.svg
+├── .github/workflows/deploy.yml    # GitHub Actions 自動部署
+└── README.md
 ```
 
 ## 🔧 技術實作
 
 ### 前端技術
-- **HTML5**：語義化標籤、表單驗證
-- **CSS3**：Flexbox、Grid、漸層、動畫
-- **Vanilla JavaScript**：純 JS，無框架依賴
-- **響應式設計**：媒體查詢、相對單位
+- **React 18**：SPA，JSX 元件化開發
+- **Vite 6**：開發伺服器、生產打包
+- **vite-plugin-pwa**：自動生成 service worker 與 manifest
+- **CSS 自訂屬性**：設計 token、深色模式
+- **localStorage**：收藏與使用歷史持久化
+
+### 本地開發
+
+```bash
+npm install
+npm run dev      # 開發伺服器 http://localhost:5173
+npm run build    # 生產打包至 dist/
+npm run preview  # 預覽 dist/
+```
 
 ### 功能特點
-- **純前端**：無需後端，可直接部署到靜態網站
-- **離線可用**：所有計算都在客戶端完成
-- **輕量化**：每個頁面都是獨立的 HTML 文件
+- **PWA**：可加入主畫面，離線可用（Workbox 自動快取）
+- **收藏 + 歷史紀錄**：跨工具的使用記錄，localStorage 持久化
+- **iOS device frame**：桌機版以 iOS 外框呈現，方便設計審閱
+- **Tweaks panel**：即時調整主題色、深色模式、首頁佈局
 - **跨平台**：支援所有現代瀏覽器
 
 ## 📋 需求提交指南
