@@ -344,7 +344,7 @@ function CocktailBAC() {
   const w = parseFloat(wt) || 0;
   const widmark = gender === 'male' ? 0.68 : 0.55;
   const pure = v * p / 100 * 0.789;
-  const bac = w > 0 ? (pure / (w * widmark)) * 100 : 0;
+  const bac = w > 0 ? (pure / (w * widmark)) / 10 : 0;
 
   let level = 'safe', msg = '濃度較低，但仍建議避免駕駛';
   if (bac >= 0.05 && bac < 0.08) { level = 'warn'; msg = '已達禁止駕駛標準（0.05%）'; }
