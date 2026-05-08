@@ -4,6 +4,7 @@ import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakToggle, TweakRad
 import { Splash, Home } from './home'
 import { BreadScreen, CocktailScreen, PriceScreen } from './tools'
 import { useStore } from './history'
+import { parseShareFromUrl } from './share'
 
 const TWEAK_DEFAULTS = { accent: '#C2683C', dark: false, layout: 'grid' };
 
@@ -25,7 +26,17 @@ function useIsNarrow() {
 
 export default function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [screen, setScreen] = useState('splash');
+  const [initialShare] = useState(() => {
+    const share = parseShareFromUrl();
+    if (share) window.history.replaceState(null, '', window.location.pathname);
+    return share;
+  });
+  const [screen, setScreen] = useState(() => {
+    const share = initialShare;
+    if (share?.t === 'cocktail') return 'cocktail';
+    if (share?.t === 'price') return 'price';
+    return 'splash';
+  });
   const [prev, setPrev] = useState(null);
   const store = useStore();
   const standalone = isStandalone();
@@ -68,10 +79,10 @@ export default function App() {
             {(screen === 'bread' || prev === 'bread') && <BreadScreen onBack={back} store={store}/>}
           </ScreenLayer>
           <ScreenLayer active={screen === 'cocktail'}>
-            {(screen === 'cocktail' || prev === 'cocktail') && <CocktailScreen onBack={back} store={store}/>}
+            {(screen === 'cocktail' || prev === 'cocktail') && <CocktailScreen onBack={back} store={store} initialShare={initialShare}/>}
           </ScreenLayer>
           <ScreenLayer active={screen === 'price'}>
-            {(screen === 'price' || prev === 'price') && <PriceScreen onBack={back} store={store}/>}
+            {(screen === 'price' || prev === 'price') && <PriceScreen onBack={back} store={store} initialShare={initialShare}/>}
           </ScreenLayer>
         </>
       )}
