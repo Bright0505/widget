@@ -12,12 +12,26 @@ function isStandalone() {
     || window.navigator.standalone === true;
 }
 
+function useIsNarrow() {
+  const [narrow, setNarrow] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const handler = (e) => setNarrow(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return narrow;
+}
+
 export default function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [screen, setScreen] = useState('splash');
   const [prev, setPrev] = useState(null);
   const store = useStore();
   const standalone = isStandalone();
+  const isNarrow = useIsNarrow();
+  // Show iOS frame only on wide-screen desktop preview, never on actual mobile
+  const showFrame = !standalone && !isNarrow;
 
   useEffect(() => {
     if (screen === 'splash') {
@@ -65,17 +79,17 @@ export default function App() {
   );
 
   return (
-    <div className={`stage ${standalone ? 'standalone' : ''}`}>
-      {standalone ? appBody : (
+    <div className={`stage ${!showFrame ? 'standalone' : ''}`}>
+      {showFrame ? (
         <IOSDevice
           deviceColor={t.dark ? '#1d1d1b' : '#f0ebe2'}
           time={fmtTime()}
         >
           {appBody}
         </IOSDevice>
-      )}
+      ) : appBody}
 
-      {!standalone && (
+      {showFrame && (
         <TweaksPanel title="Tweaks">
           <TweakSection label="主題 / Theme"/>
           <TweakColor label="重音色" value={t.accent}
