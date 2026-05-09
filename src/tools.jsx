@@ -185,6 +185,7 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
     if (inp.target) setTarget(inp.target);
     if (inp.total) setTotal(inp.total);
     if (inp.base) setBase(inp.base);
+    if (inp.aux) setAux(inp.aux);
   }, [restoreEntry]);
 
   const lastSavedRef = React.useRef('');
@@ -193,18 +194,19 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
     const tVol = parseFloat(total) || 0;
     const bConc = parseFloat(base) || 0;
     if (!tConc || !tVol || !bConc) return;
-    const sig = `${target}-${total}-${base}`;
+    const auxSig = aux.map(a => `${a.conc}:${a.vol}`).join(',');
+    const sig = `${target}-${total}-${base}-${auxSig}`;
     if (sig === lastSavedRef.current) return;
     const id = setTimeout(() => {
       lastSavedRef.current = sig;
       store.addHistory({
         toolId: 'cocktail', mode: '調酒配方',
         summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
-        inputs: { mode: 'mixing', target, total, base },
+        inputs: { mode: 'mixing', target, total, base, aux },
       });
     }, 1500);
     return () => clearTimeout(id);
-  }, [target, total, base]);
+  }, [target, total, base, aux]);
 
   const tConc = parseFloat(target) || 0;
   const tVol = parseFloat(total) || 0;
