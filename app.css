@@ -176,7 +176,7 @@ html, body {
   top: 0;
   z-index: 10;
   background: var(--bg);
-  padding: max(20px, calc(env(safe-area-inset-top) + 12px)) 20px 16px;
+  padding: max(24px, calc(env(safe-area-inset-top) + 12px)) 20px 16px;
   display: flex; flex-direction: column; gap: 20px;
 }
 .home-body {
@@ -185,7 +185,6 @@ html, body {
 }
 .home-greet {
   display: flex; flex-direction: column; gap: 6px;
-  margin-top: 8px;
 }
 .home-date {
   font-family: var(--serif-en);
