@@ -73,7 +73,7 @@ function ToolCard({ tool, size = 'small', extraClass = '', onPick, isFav, onTogg
 export function Home({ onPick, layout = 'mixed', store }) {
   const [tab, setTab] = useState('tools');
   const [greet] = greeting();
-  const { favorites, history, toggleFav, removeHistory, clearHistory } = store;
+  const { favorites, history, notes, toggleFav, removeHistory, clearHistory, removeNote, clearNotes } = store;
   const favTools = favorites.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
   const isFav = (id) => favorites.includes(id);
 
@@ -89,6 +89,9 @@ export function Home({ onPick, layout = 'mixed', store }) {
           <button className={tab === 'tools' ? 'on' : ''} onClick={() => setTab('tools')}>工具</button>
           <button className={tab === 'history' ? 'on' : ''} onClick={() => setTab('history')}>
             最近使用 {history.length > 0 ? `· ${history.length}` : ''}
+          </button>
+          <button className={tab === 'notes' ? 'on' : ''} onClick={() => setTab('notes')}>
+            生活記事 {notes.length > 0 ? `· ${notes.length}` : ''}
           </button>
         </div>
       </div>
@@ -201,6 +204,47 @@ export function Home({ onPick, layout = 'mixed', store }) {
                       </div>
                       <span className="h-time">{relTime(h.ts)}</span>
                       <button className="h-del" onClick={() => removeHistory(h.id)}>
+                        <Glyph name="close" size={12}/>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === 'notes' && (
+          <div>
+            <div className="section-h">
+              <span className="en">Life Notes</span>
+              <span className="tc">生活記事</span>
+              {notes.length > 0 && (
+                <button onClick={clearNotes}
+                  style={{border:0, background:'transparent', color:'var(--text-3)', fontSize:11, cursor:'pointer', marginLeft:'auto', fontFamily:'var(--serif-en)', fontStyle:'italic'}}>
+                  Clear all
+                </button>
+              )}
+            </div>
+            {notes.length === 0 ? (
+              <div className="empty-state">
+                <div className="e-en">Empty</div>
+                <div className="e-t">還沒有記事</div>
+                <div className="e-d">使用工具時點擊右上角保存</div>
+              </div>
+            ) : (
+              <div>
+                {notes.map(n => {
+                  const tool = TOOLS.find(t => t.id === n.toolId);
+                  return (
+                    <div key={n.id} className="history-row">
+                      <div className="h-glyph"><Glyph name={tool ? tool.glyph : 'bread'} size={20} stroke={1.4}/></div>
+                      <div className="h-meta">
+                        <div className="h-tool">{tool ? tool.label : n.toolId} {n.mode ? `· ${n.mode}` : ''}</div>
+                        <div className="h-sum">{n.summary}</div>
+                      </div>
+                      <span className="h-time">{relTime(n.ts)}</span>
+                      <button className="h-del" onClick={() => removeNote(n.id)}>
                         <Glyph name="close" size={12}/>
                       </button>
                     </div>

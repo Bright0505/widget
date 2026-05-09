@@ -16,10 +16,20 @@ const RECIPES = {
 };
 
 export function BreadScreen({ onBack, store, restoreEntry }) {
-  const isFav = store.favorites.includes('bread');
-  const onToggleFav = () => store.toggleFav('bread');
   const [recipe, setRecipe] = React.useState('t55');
   const [flour, setFlour] = React.useState('500');
+  const [saveMsg, setSaveMsg] = React.useState('');
+
+  const onSaveNote = () => {
+    store.addNote({
+      toolId: 'bread',
+      mode: RECIPES[recipe].name,
+      summary: `麵粉 ${flour}g · 水 ${Math.round(parseFloat(flour)*RECIPES[recipe].water/100)}g`,
+      inputs: { recipe, flour },
+    });
+    setSaveMsg('已保存');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
 
   React.useEffect(() => {
     if (!restoreEntry?.inputs) return;
@@ -63,10 +73,11 @@ export function BreadScreen({ onBack, store, restoreEntry }) {
       <div className="tool-head">
         <button className="back-btn" onClick={onBack}><Glyph name="arrow-left" size={16}/>返回</button>
         <span className="crumb">French Bread</span>
-        <div className="head-actions">
-          <button className={`icon-btn ${isFav ? 'on' : ''}`} onClick={onToggleFav}>
-            <span style={{color: isFav ? '#fff' : 'var(--text-3)'}}><StarIcon filled={isFav} size={14}/></span>
+        <div className="head-actions" style={{display:'flex', alignItems:'center', gap:8}}>
+          <button className="icon-btn" onClick={onSaveNote} title="保存到生活記事">
+            <span style={{color: 'var(--accent)'}}><StarIcon filled={true} size={14}/></span>
           </button>
+          {saveMsg && <span style={{fontSize:12, color:'var(--text-3)'}}>{saveMsg}</span>}
         </div>
       </div>
       <div className="tool-title-block">
@@ -136,9 +147,16 @@ function smartRound(v) {
 }
 
 export function CocktailScreen({ onBack, store, initialShare, restoreEntry }) {
-  const isFav = store.favorites.includes('cocktail');
-  const onToggleFav = () => store.toggleFav('cocktail');
   const [mode, setMode] = React.useState('mixing');
+  const [saveMsg, setSaveMsg] = React.useState('');
+  const [currentNote, setCurrentNote] = React.useState(null);
+
+  const onSaveNote = () => {
+    if (!currentNote) return;
+    store.addNote(currentNote);
+    setSaveMsg('已保存');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
 
   React.useEffect(() => {
     if (!restoreEntry?.inputs?.mode) return;
@@ -150,10 +168,11 @@ export function CocktailScreen({ onBack, store, initialShare, restoreEntry }) {
       <div className="tool-head">
         <button className="back-btn" onClick={onBack}><Glyph name="arrow-left" size={16}/>返回</button>
         <span className="crumb">Cocktail</span>
-        <div className="head-actions">
-          <button className={`icon-btn ${isFav ? 'on' : ''}`} onClick={onToggleFav}>
-            <span style={{color: isFav ? '#fff' : 'var(--text-3)'}}><StarIcon filled={isFav} size={14}/></span>
+        <div className="head-actions" style={{display:'flex', alignItems:'center', gap:8}}>
+          <button className="icon-btn" onClick={onSaveNote} title="保存到生活記事" disabled={!currentNote}>
+            <span style={{color: currentNote ? 'var(--accent)' : 'var(--text-3)'}}><StarIcon filled={!!currentNote} size={14}/></span>
           </button>
+          {saveMsg && <span style={{fontSize:12, color:'var(--text-3)'}}>{saveMsg}</span>}
         </div>
       </div>
       <div className="tool-title-block">
@@ -165,13 +184,13 @@ export function CocktailScreen({ onBack, store, initialShare, restoreEntry }) {
           <button className={mode === 'mixing' ? 'on' : ''} onClick={() => setMode('mixing')}>調酒配方</button>
           <button className={mode === 'bac' ? 'on' : ''} onClick={() => setMode('bac')}>血液濃度</button>
         </div>
-        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare} store={store} restoreEntry={restoreEntry}/> : <CocktailBAC/>}
+        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare} store={store} restoreEntry={restoreEntry} onNoteChange={setCurrentNote}/> : <CocktailBAC onNoteChange={setCurrentNote}/>}
       </div>
     </div>
   );
 }
 
-function CocktailMixing({ initialShare, store, restoreEntry }) {
+function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
   const init = initialShare?.m === 'mixing' ? initialShare : null;
   const [target, setTarget] = React.useState(init?.target ?? '9');
   const [total, setTotal] = React.useState(init?.total ?? '250');
@@ -193,6 +212,15 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
     const tConc = parseFloat(target) || 0;
     const tVol = parseFloat(total) || 0;
     const bConc = parseFloat(base) || 0;
+    if (tConc && tVol && bConc) {
+      onNoteChange?.({
+        toolId: 'cocktail', mode: '調酒配方',
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        inputs: { mode: 'mixing', target, total, base, aux },
+      });
+    } else {
+      onNoteChange?.(null);
+    }
     if (!tConc || !tVol || !bConc) return;
     const auxSig = aux.map(a => `${a.conc}:${a.vol}`).join(',');
     const sig = `${target}-${total}-${base}-${auxSig}`;
@@ -386,7 +414,7 @@ function CocktailGlass({ alc = 0, aux = 0, mix = 0 }) {
   );
 }
 
-function CocktailBAC() {
+function CocktailBAC({ onNoteChange }) {
   const [vol, setVol] = React.useState('330');
   const [pct, setPct] = React.useState('5');
   const [wt, setWt] = React.useState('60');
@@ -398,6 +426,18 @@ function CocktailBAC() {
   const widmark = gender === 'male' ? 0.68 : 0.55;
   const pure = v * p / 100 * 0.789;
   const bac = w > 0 ? (pure / (w * widmark)) / 10 : 0;
+
+  React.useEffect(() => {
+    if (v > 0 && p > 0 && w > 0) {
+      onNoteChange?.({
+        toolId: 'cocktail', mode: '血液濃度',
+        summary: `${vol}ml · ${pct}% · ${gender === 'male' ? '男' : '女'} · BAC ${bac.toFixed(3)}%`,
+        inputs: { mode: 'bac', vol, pct, wt, gender },
+      });
+    } else {
+      onNoteChange?.(null);
+    }
+  }, [vol, pct, wt, gender, bac]);
 
   let level = 'safe', msg = '濃度較低，但仍建議避免駕駛';
   if (bac >= 0.05 && bac < 0.08) { level = 'warn'; msg = '已達禁止駕駛標準（0.05%）'; }
@@ -450,9 +490,8 @@ const UNIT_CONV = { ml:1, l:1000, 'fl oz':29.5735, g:1, kg:1000, '台斤':600, '
 const UNIT_TYPE_LABEL = { volume:'容量類', weight:'重量類', package:'包裝類' };
 
 export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
-  const isFav = store.favorites.includes('price');
-  const onToggleFav = () => store.toggleFav('price');
   const [showShare, setShowShare] = React.useState(false);
+  const [saveMsg, setSaveMsg] = React.useState('');
   const [products, setProducts] = React.useState(() => {
     if (!initialShare?.products?.length) return [];
     return initialShare.products.map((p, i) => {
@@ -481,6 +520,17 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
   React.useEffect(() => {
     setUnit(Object.keys(UNIT_OPTIONS[type])[0]);
   }, [type]);
+
+  const onSaveNote = () => {
+    if (products.length === 0) return;
+    store.addNote({
+      toolId: 'price',
+      summary: `${products.length} 項商品 · 最划算 ${products[0]?.name}`,
+      inputs: { products: products.map(p => ({ name: p.name, price: p.price, qty: p.qty, unit: p.unit, type: p.type })) },
+    });
+    setSaveMsg('已保存');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
 
   const add = () => {
     const pr = parseFloat(price), q = parseFloat(qty);
@@ -514,10 +564,11 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
       <div className="tool-head">
         <button className="back-btn" onClick={onBack}><Glyph name="arrow-left" size={16}/>返回</button>
         <span className="crumb">Price Compare</span>
-        <div className="head-actions">
-          <button className={`icon-btn ${isFav ? 'on' : ''}`} onClick={onToggleFav}>
-            <span style={{color: isFav ? '#fff' : 'var(--text-3)'}}><StarIcon filled={isFav} size={14}/></span>
+        <div className="head-actions" style={{display:'flex', alignItems:'center', gap:8}}>
+          <button className="icon-btn" onClick={onSaveNote} title="保存到生活記事" disabled={products.length === 0}>
+            <span style={{color: products.length > 0 ? 'var(--accent)' : 'var(--text-3)'}}><StarIcon filled={products.length > 0} size={14}/></span>
           </button>
+          {saveMsg && <span style={{fontSize:12, color:'var(--text-3)'}}>{saveMsg}</span>}
         </div>
       </div>
       <div className="tool-title-block">
