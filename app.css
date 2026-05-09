@@ -328,7 +328,7 @@ html, body {
 
 /* ===== Tool screen common ===== */
 .tool-head {
-  padding: max(70px, calc(env(safe-area-inset-top) + 8px)) 18px 8px;
+  padding: max(16px, calc(env(safe-area-inset-top) + 8px)) 18px 8px;
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px;
 }
