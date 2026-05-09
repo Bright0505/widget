@@ -195,7 +195,7 @@ export function Home({ onPick, layout = 'mixed', store }) {
                   return (
                     <div key={h.id} className="history-row">
                       <div className="h-glyph"><Glyph name={tool ? tool.glyph : 'bread'} size={20} stroke={1.4}/></div>
-                      <div className="h-meta" role="button" tabIndex={0} style={{cursor:'pointer'}} onClick={() => onPick(h.toolId)}>
+                      <div className="h-meta" role="button" tabIndex={0} style={{cursor:'pointer'}} onClick={() => onPick(h.toolId, h)}>
                         <div className="h-tool">{tool ? tool.label : h.toolId} {h.mode ? `· ${h.mode}` : ''}</div>
                         <div className="h-sum">{h.summary}</div>
                       </div>
