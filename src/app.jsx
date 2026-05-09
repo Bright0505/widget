@@ -38,6 +38,7 @@ export default function App() {
     return 'splash';
   });
   const [prev, setPrev] = useState(null);
+  const [restoreEntry, setRestoreEntry] = useState(null);
   const store = useStore();
   const standalone = isStandalone();
   const isNarrow = useIsNarrow();
@@ -64,7 +65,7 @@ export default function App() {
     return () => clearTimeout(id);
   }, [screen]);
 
-  const goto = (next) => { setPrev(screen); setScreen(next); };
+  const goto = (next, entry = null) => { setPrev(screen); setScreen(next); setRestoreEntry(entry); };
   const back = () => goto('home');
 
   const appBody = (
@@ -76,13 +77,13 @@ export default function App() {
             <Home onPick={goto} layout={t.layout} store={store}/>
           </ScreenLayer>
           <ScreenLayer active={screen === 'bread'}>
-            {(screen === 'bread' || prev === 'bread') && <BreadScreen onBack={back} store={store}/>}
+            {(screen === 'bread' || prev === 'bread') && <BreadScreen onBack={back} store={store} restoreEntry={screen === 'bread' ? restoreEntry : null}/>}
           </ScreenLayer>
           <ScreenLayer active={screen === 'cocktail'}>
-            {(screen === 'cocktail' || prev === 'cocktail') && <CocktailScreen onBack={back} store={store} initialShare={initialShare}/>}
+            {(screen === 'cocktail' || prev === 'cocktail') && <CocktailScreen onBack={back} store={store} initialShare={initialShare} restoreEntry={screen === 'cocktail' ? restoreEntry : null}/>}
           </ScreenLayer>
           <ScreenLayer active={screen === 'price'}>
-            {(screen === 'price' || prev === 'price') && <PriceScreen onBack={back} store={store} initialShare={initialShare}/>}
+            {(screen === 'price' || prev === 'price') && <PriceScreen onBack={back} store={store} initialShare={initialShare} restoreEntry={screen === 'price' ? restoreEntry : null}/>}
           </ScreenLayer>
         </>
       )}

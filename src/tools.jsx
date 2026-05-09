@@ -15,11 +15,18 @@ const RECIPES = {
     tips: ['一發 1-2 小時至兩倍大，二發 30-45 分', '入烤盤後指尖戳洞，淋橄欖油', '預熱 200-220°C 烘烤 20-25 分'] },
 };
 
-export function BreadScreen({ onBack, store }) {
+export function BreadScreen({ onBack, store, restoreEntry }) {
   const isFav = store.favorites.includes('bread');
   const onToggleFav = () => store.toggleFav('bread');
   const [recipe, setRecipe] = React.useState('t55');
   const [flour, setFlour] = React.useState('500');
+
+  React.useEffect(() => {
+    if (!restoreEntry?.inputs) return;
+    setRecipe(restoreEntry.inputs.recipe || 't55');
+    setFlour(restoreEntry.inputs.flour || '500');
+  }, [restoreEntry]);
+
   const lastSavedRef = React.useRef('');
   React.useEffect(() => {
     if (!flour || parseFloat(flour) <= 0) return;
@@ -29,6 +36,7 @@ export function BreadScreen({ onBack, store }) {
       lastSavedRef.current = sig;
       store.addHistory({ toolId:'bread', mode: RECIPES[recipe].name,
         summary: `麵粉 ${flour}g · 水 ${Math.round(parseFloat(flour)*RECIPES[recipe].water/100)}g`,
+        inputs: { recipe, flour },
       });
     }, 1500);
     return () => clearTimeout(id);
@@ -127,10 +135,16 @@ function smartRound(v) {
   return r;
 }
 
-export function CocktailScreen({ onBack, store, initialShare }) {
+export function CocktailScreen({ onBack, store, initialShare, restoreEntry }) {
   const isFav = store.favorites.includes('cocktail');
   const onToggleFav = () => store.toggleFav('cocktail');
   const [mode, setMode] = React.useState('mixing');
+
+  React.useEffect(() => {
+    if (!restoreEntry?.inputs?.mode) return;
+    setMode(restoreEntry.inputs.mode);
+  }, [restoreEntry]);
+
   return (
     <div className="app-scroll">
       <div className="tool-head">
@@ -151,19 +165,46 @@ export function CocktailScreen({ onBack, store, initialShare }) {
           <button className={mode === 'mixing' ? 'on' : ''} onClick={() => setMode('mixing')}>調酒配方</button>
           <button className={mode === 'bac' ? 'on' : ''} onClick={() => setMode('bac')}>血液濃度</button>
         </div>
-        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare}/> : <CocktailBAC/>}
+        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare} store={store} restoreEntry={restoreEntry}/> : <CocktailBAC/>}
       </div>
     </div>
   );
 }
 
-function CocktailMixing({ initialShare }) {
+function CocktailMixing({ initialShare, store, restoreEntry }) {
   const init = initialShare?.m === 'mixing' ? initialShare : null;
   const [target, setTarget] = React.useState(init?.target ?? '9');
   const [total, setTotal] = React.useState(init?.total ?? '250');
   const [base, setBase] = React.useState(init?.base ?? '40');
   const [aux, setAux] = React.useState(init?.aux ?? [{ conc: '', vol: '' }]);
   const [showShare, setShowShare] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!restoreEntry?.inputs) return;
+    const inp = restoreEntry.inputs;
+    if (inp.target) setTarget(inp.target);
+    if (inp.total) setTotal(inp.total);
+    if (inp.base) setBase(inp.base);
+  }, [restoreEntry]);
+
+  const lastSavedRef = React.useRef('');
+  React.useEffect(() => {
+    const tConc = parseFloat(target) || 0;
+    const tVol = parseFloat(total) || 0;
+    const bConc = parseFloat(base) || 0;
+    if (!tConc || !tVol || !bConc) return;
+    const sig = `${target}-${total}-${base}`;
+    if (sig === lastSavedRef.current) return;
+    const id = setTimeout(() => {
+      lastSavedRef.current = sig;
+      store.addHistory({
+        toolId: 'cocktail', mode: '調酒配方',
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        inputs: { mode: 'mixing', target, total, base },
+      });
+    }, 1500);
+    return () => clearTimeout(id);
+  }, [target, total, base]);
 
   const tConc = parseFloat(target) || 0;
   const tVol = parseFloat(total) || 0;
@@ -397,7 +438,7 @@ const UNIT_OPTIONS = {
 const UNIT_CONV = { ml:1, l:1000, 'fl oz':29.5735, g:1, kg:1000, '台斤':600, '市斤':500, '磅':453.592 };
 const UNIT_TYPE_LABEL = { volume:'容量類', weight:'重量類', package:'包裝類' };
 
-export function PriceScreen({ onBack, store, initialShare }) {
+export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
   const isFav = store.favorites.includes('price');
   const onToggleFav = () => store.toggleFav('price');
   const [showShare, setShowShare] = React.useState(false);
@@ -422,6 +463,11 @@ export function PriceScreen({ onBack, store, initialShare }) {
   const [addError, setAddError] = React.useState('');
 
   React.useEffect(() => {
+    if (!restoreEntry?.inputs?.products) return;
+    setProducts(restoreEntry.inputs.products);
+  }, [restoreEntry]);
+
+  React.useEffect(() => {
     setUnit(Object.keys(UNIT_OPTIONS[type])[0]);
   }, [type]);
 
@@ -439,8 +485,10 @@ export function PriceScreen({ onBack, store, initialShare }) {
       standardUnitPrice: pr / standardQty,
       standardUnit: type === 'volume' ? 'ml' : type === 'weight' ? 'g' : unit,
     };
-    setProducts([...products, newP]);
-    store.addHistory({ toolId:'price', summary: `${name} · $${pr} / ${q}${unit}` });
+    const nextProducts = [...products, newP];
+    setProducts(nextProducts);
+    store.addHistory({ toolId:'price', summary: `${name} · $${pr} / ${q}${unit}`,
+      inputs: { products: nextProducts } });
     setName(''); setPrice(''); setQty('');
   };
 
