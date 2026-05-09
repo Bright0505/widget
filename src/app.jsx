@@ -35,6 +35,8 @@ export default function App() {
     const share = initialShare;
     if (share?.t === 'cocktail') return 'cocktail';
     if (share?.t === 'price') return 'price';
+    const splashShown = sessionStorage.getItem('splashShown');
+    if (splashShown) return 'home';
     return 'splash';
   });
   const [prev, setPrev] = useState(null);
@@ -47,7 +49,10 @@ export default function App() {
 
   useEffect(() => {
     if (screen === 'splash') {
-      const id = setTimeout(() => setScreen('home'), 1800);
+      const id = setTimeout(() => {
+        sessionStorage.setItem('splashShown', 'true');
+        setScreen('home');
+      }, 1800);
       return () => clearTimeout(id);
     }
   }, [screen]);
