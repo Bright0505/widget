@@ -176,7 +176,7 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
   const [target, setTarget] = React.useState(init?.target ?? '9');
   const [total, setTotal] = React.useState(init?.total ?? '250');
   const [base, setBase] = React.useState(init?.base ?? '40');
-  const [aux, setAux] = React.useState(init?.aux ?? [{ conc: '', vol: '' }]);
+  const [aux, setAux] = React.useState(init?.aux ?? [{ name: '', conc: '', vol: '' }]);
   const [showShare, setShowShare] = React.useState(false);
 
   React.useEffect(() => {
@@ -277,13 +277,16 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
             <div className="vol">{valid ? alc : '—'}<small style={{fontFamily:'var(--sans)', fontSize:11, color:'var(--text-3)', fontStyle:'normal', marginLeft:2}}>ml</small></div>
             <div className="bar"><i style={{ width: fillAlc + '%' }}/></div>
           </div>
-          {auxList.length > 0 && auxList.map((a, i) => (
-            <div key={i} className="liquid-row aux">
-              <div><div className="nm">輔料 {i + 1}</div><div className="pct">{a.conc}% · {Math.round(a.vol/tVol*100)}% 杯量</div></div>
-              <div className="vol">{a.vol}<small style={{fontFamily:'var(--sans)', fontSize:11, color:'var(--text-3)', fontStyle:'normal', marginLeft:2}}>ml</small></div>
-              <div className="bar"><i style={{ width: (a.vol/tVol*100) + '%' }}/></div>
-            </div>
-          ))}
+          {auxList.length > 0 && auxList.map((a, i) => {
+            const auxItem = aux[aux.findIndex(x => x.conc === String(a.conc) && x.vol === String(a.vol))];
+            return (
+              <div key={i} className="liquid-row aux">
+                <div><div className="nm">{auxItem?.name || `輔料 ${i + 1}`}</div><div className="pct">{a.conc}% · {Math.round(a.vol/tVol*100)}% 杯量</div></div>
+                <div className="vol">{a.vol}<small style={{fontFamily:'var(--sans)', fontSize:11, color:'var(--text-3)', fontStyle:'normal', marginLeft:2}}>ml</small></div>
+                <div className="bar"><i style={{ width: (a.vol/tVol*100) + '%' }}/></div>
+              </div>
+            );
+          })}
           <div className="liquid-row aux">
             <div><div className="nm">稀釋液（水/冰塊融化等）</div><div className="pct">{valid ? Math.round(fillMix) : 0}% 杯量</div></div>
             <div className="vol">{valid ? mixer : '—'}<small style={{fontFamily:'var(--sans)', fontSize:11, color:'var(--text-3)', fontStyle:'normal', marginLeft:2}}>ml</small></div>
@@ -296,24 +299,30 @@ function CocktailMixing({ initialShare, store, restoreEntry }) {
         <div className="section-h"><span className="en">Optional</span><span className="tc">輔料（含酒精的果汁、香甜酒…）</span></div>
         <div style={{display:'flex', flexDirection:'column', gap: 10}}>
           {aux.map((a, i) => (
-            <div key={i} style={{display:'grid', gridTemplateColumns:'1fr 1fr auto', gap: 8, alignItems: 'center'}}>
+            <div key={i} style={{display:'flex', flexDirection:'column', gap: 8}}>
               <div className="input-wrap">
-                <input type="number" inputMode="decimal" placeholder="濃度 %" value={a.conc}
-                  onChange={e => setAux(aux.map((x, j) => j === i ? {...x, conc: e.target.value} : x))}/>
-                <div className="input-suffix">%</div>
+                <input type="text" placeholder="輔料名稱（例如：檸檬汁、糖漿）" value={a.name}
+                  onChange={e => setAux(aux.map((x, j) => j === i ? {...x, name: e.target.value} : x))}/>
               </div>
-              <div className="input-wrap">
-                <input type="number" inputMode="decimal" placeholder="容量 ml" value={a.vol}
-                  onChange={e => setAux(aux.map((x, j) => j === i ? {...x, vol: e.target.value} : x))}/>
-                <div className="input-suffix">ml</div>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr auto', gap: 8, alignItems: 'center'}}>
+                <div className="input-wrap">
+                  <input type="number" inputMode="decimal" placeholder="濃度 %" value={a.conc}
+                    onChange={e => setAux(aux.map((x, j) => j === i ? {...x, conc: e.target.value} : x))}/>
+                  <div className="input-suffix">%</div>
+                </div>
+                <div className="input-wrap">
+                  <input type="number" inputMode="decimal" placeholder="容量 ml" value={a.vol}
+                    onChange={e => setAux(aux.map((x, j) => j === i ? {...x, vol: e.target.value} : x))}/>
+                  <div className="input-suffix">ml</div>
+                </div>
+                <button onClick={() => setAux(aux.length === 1 ? [{name:'', conc:'', vol:''}] : aux.filter((_, j) => j !== i))}
+                  style={{width:36, height:36, borderRadius:'50%', border:'1px solid var(--border)', background:'var(--surface)', cursor:'pointer', color:'var(--text-3)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <Glyph name="close" size={14}/>
+                </button>
               </div>
-              <button onClick={() => setAux(aux.length === 1 ? [{conc:'', vol:''}] : aux.filter((_, j) => j !== i))}
-                style={{width:36, height:36, borderRadius:'50%', border:'1px solid var(--border)', background:'var(--surface)', cursor:'pointer', color:'var(--text-3)', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <Glyph name="close" size={14}/>
-              </button>
             </div>
           ))}
-          <button className="add-liq" onClick={() => setAux([...aux, {conc:'', vol:''}])}>
+          <button className="add-liq" onClick={() => setAux([...aux, {name:'', conc:'', vol:''}])}>
             <Glyph name="plus" size={14}/> 新增輔料
           </button>
         </div>
