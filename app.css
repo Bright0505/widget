@@ -305,6 +305,7 @@ html, body {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+.grid-2 > * { min-width: 0; }
 
 .banner {
   background: var(--surface);
@@ -521,6 +522,7 @@ html, body {
 .input-wrap input::placeholder { color: var(--text-3); }
 .input-suffix {
   display: flex; align-items: center; padding-right: 16px;
+  flex-shrink: 0;
   color: var(--text-3); font-size: 14px; font-family: var(--serif-en); font-style: italic;
 }
 
