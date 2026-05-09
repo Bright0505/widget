@@ -27,9 +27,10 @@ function buildShareUrl(data) {
   return base + '#share=' + encodeShareData(data)
 }
 
-export function ShareModal({ data, onClose }) {
+export function ShareModal({ data, title: defaultTitle = '', onClose }) {
   const [qrSrc, setQrSrc] = React.useState('')
   const [copied, setCopied] = React.useState(false)
+  const [userTitle, setUserTitle] = React.useState(defaultTitle)
   const url = buildShareUrl(data)
 
   React.useEffect(() => {
@@ -43,6 +44,39 @@ export function ShareModal({ data, onClose }) {
     })
   }
 
+  const download = () => {
+    if (!qrSrc) return
+    const img = new Image()
+    img.onload = () => {
+      const pad = 24
+      const fontSize = 15
+      const gap = 14
+      const titleText = userTitle.trim()
+      const dlCanvas = document.createElement('canvas')
+      const titleH = titleText ? gap + fontSize + 8 : 0
+      dlCanvas.width = img.width + pad * 2
+      dlCanvas.height = img.height + pad + titleH + pad
+      const ctx = dlCanvas.getContext('2d')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, dlCanvas.width, dlCanvas.height)
+      ctx.drawImage(img, pad, pad)
+      if (titleText) {
+        ctx.fillStyle = '#1a1a1a'
+        ctx.font = `600 ${fontSize}px -apple-system, "SF Pro Text", system-ui, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.fillText(titleText, dlCanvas.width / 2, img.height + pad + gap + fontSize - 2)
+      }
+      dlCanvas.toBlob(blob => {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = (titleText || 'qrcode') + '.png'
+        a.click()
+        URL.revokeObjectURL(a.href)
+      })
+    }
+    img.src = qrSrc
+  }
+
   return (
     <div className="share-overlay" onClick={onClose}>
       <div className="share-card" onClick={e => e.stopPropagation()}>
@@ -51,11 +85,25 @@ export function ShareModal({ data, onClose }) {
           <button className="share-close" onClick={onClose}>✕</button>
         </div>
         <p className="share-hint">掃描 QR Code 或複製連結</p>
-        {qrSrc
-          ? <img src={qrSrc} alt="QR Code" className="share-qr"/>
-          : <div className="share-qr-ph"/>
-        }
-        <button className="btn-primary" style={{width:'100%'}} onClick={copy}>
+        <div className="share-qr-wrap">
+          {qrSrc
+            ? <img src={qrSrc} alt="QR Code" className="share-qr"/>
+            : <div className="share-qr-ph"/>
+          }
+          {userTitle.trim() && <p className="share-qr-label">{userTitle.trim()}</p>}
+        </div>
+        <input
+          className="share-title-input"
+          type="text"
+          placeholder="加入標題（選填）"
+          value={userTitle}
+          onChange={e => setUserTitle(e.target.value)}
+          maxLength={40}
+        />
+        <button className="btn-primary" style={{width:'100%'}} onClick={download} disabled={!qrSrc}>
+          下載 QR Code
+        </button>
+        <button className="btn-secondary" style={{width:'100%'}} onClick={copy}>
           {copied ? '已複製連結 ✓' : '複製連結'}
         </button>
       </div>

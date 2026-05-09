@@ -293,6 +293,7 @@ function CocktailMixing({ initialShare }) {
       {showShare && (
         <ShareModal
           data={{ t: 'cocktail', m: 'mixing', target, total, base, aux }}
+          title="調酒配方"
           onClose={() => setShowShare(false)}
         />
       )}
@@ -506,6 +507,7 @@ export function PriceScreen({ onBack, store, initialShare }) {
           {showShare && (
             <ShareModal
               data={{ t: 'price', products: products.map(p => ({ name: p.name, price: p.price, qty: p.qty, unit: p.unit, type: p.type })) }}
+              title="比價結果"
               onClose={() => setShowShare(false)}
             />
           )}
