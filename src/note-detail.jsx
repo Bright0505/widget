@@ -14,6 +14,7 @@ const UNIT_CONV = { ml:1, l:1000, 'fl oz':29.5735, g:1, kg:1000, '台斤':600, '
 export function NoteDetailScreen({ onBack, note, store }) {
   const [editMode, setEditMode] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
+  const [editedNote, setEditedNote] = useState(null);
   const tool = note ? TOOLS.find(t => t.id === note.toolId) : null;
 
   if (!note) {
@@ -28,15 +29,17 @@ export function NoteDetailScreen({ onBack, note, store }) {
   }
 
   const handleSaveEdit = () => {
+    if (!editedNote) return;
     store.removeNote(note.id);
     store.addNote({
-      toolId: note.toolId,
-      mode: note.mode,
-      summary: note.summary,
-      inputs: note.inputs,
+      toolId: editedNote.toolId,
+      mode: editedNote.mode,
+      summary: editedNote.summary,
+      inputs: editedNote.inputs,
     });
     setSaveMsg('已保存');
     setEditMode(false);
+    setEditedNote(null);
     setTimeout(() => setSaveMsg(''), 2000);
   };
 
@@ -77,21 +80,30 @@ export function NoteDetailScreen({ onBack, note, store }) {
 
       <div className="tool-body">
         {note.toolId === 'bread' && (
-          <BreadNoteDetail note={note} editMode={editMode} onNoteChange={(updated) => {
-            note.inputs = updated.inputs;
-            note.summary = updated.summary;
+          <BreadNoteDetail note={editMode ? editedNote || note : note} editMode={editMode} onNoteChange={(updated) => {
+            setEditedNote({
+              ...note,
+              inputs: updated.inputs,
+              summary: updated.summary,
+            });
           }}/>
         )}
         {note.toolId === 'cocktail' && (
-          <CocktailNoteDetail note={note} editMode={editMode} onNoteChange={(updated) => {
-            note.inputs = updated.inputs;
-            note.summary = updated.summary;
+          <CocktailNoteDetail note={editMode ? editedNote || note : note} editMode={editMode} onNoteChange={(updated) => {
+            setEditedNote({
+              ...note,
+              inputs: updated.inputs,
+              summary: updated.summary,
+            });
           }}/>
         )}
         {note.toolId === 'price' && (
-          <PriceNoteDetail note={note} editMode={editMode} onNoteChange={(updated) => {
-            note.inputs = updated.inputs;
-            note.summary = updated.summary;
+          <PriceNoteDetail note={editMode ? editedNote || note : note} editMode={editMode} onNoteChange={(updated) => {
+            setEditedNote({
+              ...note,
+              inputs: updated.inputs,
+              summary: updated.summary,
+            });
           }}/>
         )}
       </div>
