@@ -212,10 +212,12 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
     const tConc = parseFloat(target) || 0;
     const tVol = parseFloat(total) || 0;
     const bConc = parseFloat(base) || 0;
+    const auxList = aux.filter(a => parseFloat(a.vol) > 0);
+    const auxText = auxList.length > 0 ? ` · ${auxList.length}輔料` : '';
     if (tConc && tVol && bConc) {
       onNoteChange?.({
         toolId: 'cocktail', mode: '調酒配方',
-        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%${auxText}`,
         inputs: { mode: 'mixing', target, total, base, aux },
       });
     } else {
@@ -229,7 +231,7 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
       lastSavedRef.current = sig;
       store.addHistory({
         toolId: 'cocktail', mode: '調酒配方',
-        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%${auxText}`,
         inputs: { mode: 'mixing', target, total, base, aux },
       });
     }, 1500);
