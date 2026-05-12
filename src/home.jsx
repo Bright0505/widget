@@ -237,7 +237,7 @@ export function Home({ onPick, layout = 'mixed', store, onViewNote }) {
                 {notes.map(n => {
                   const tool = TOOLS.find(t => t.id === n.toolId);
                   return (
-                    <div key={n.id} className="history-row" role="button" tabIndex={0} style={{cursor:'pointer'}} onClick={() => onViewNote?.(n)}>
+                    <div key={n.id} className="history-row" role="button" tabIndex={0} style={{cursor:'pointer'}} onClick={() => onViewNote?.(n.toolId, n)}>
                       <div className="h-glyph"><Glyph name={tool ? tool.glyph : 'bread'} size={20} stroke={1.4}/></div>
                       <div className="h-meta">
                         <div className="h-tool">{tool ? tool.label : n.toolId} {n.mode ? `· ${n.mode}` : ''}</div>
