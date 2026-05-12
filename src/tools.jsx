@@ -184,7 +184,7 @@ export function CocktailScreen({ onBack, store, initialShare, restoreEntry }) {
           <button className={mode === 'mixing' ? 'on' : ''} onClick={() => setMode('mixing')}>調酒配方</button>
           <button className={mode === 'bac' ? 'on' : ''} onClick={() => setMode('bac')}>血液濃度</button>
         </div>
-        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare} store={store} restoreEntry={restoreEntry} onNoteChange={setCurrentNote}/> : <CocktailBAC onNoteChange={setCurrentNote}/>}
+        {mode === 'mixing' ? <CocktailMixing initialShare={initialShare} store={store} restoreEntry={restoreEntry} onNoteChange={setCurrentNote}/> : <CocktailBAC restoreEntry={restoreEntry} onNoteChange={setCurrentNote}/>}
       </div>
     </div>
   );
@@ -212,10 +212,12 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
     const tConc = parseFloat(target) || 0;
     const tVol = parseFloat(total) || 0;
     const bConc = parseFloat(base) || 0;
+    const auxList = aux.filter(a => parseFloat(a.vol) > 0);
+    const auxText = auxList.length > 0 ? ` · ${auxList.length}輔料` : '';
     if (tConc && tVol && bConc) {
       onNoteChange?.({
         toolId: 'cocktail', mode: '調酒配方',
-        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%${auxText}`,
         inputs: { mode: 'mixing', target, total, base, aux },
       });
     } else {
@@ -229,7 +231,7 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
       lastSavedRef.current = sig;
       store.addHistory({
         toolId: 'cocktail', mode: '調酒配方',
-        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%`,
+        summary: `目標 ${target}% · ${total}ml · 基酒 ${base}%${auxText}`,
         inputs: { mode: 'mixing', target, total, base, aux },
       });
     }, 1500);
@@ -414,11 +416,20 @@ function CocktailGlass({ alc = 0, aux = 0, mix = 0 }) {
   );
 }
 
-function CocktailBAC({ onNoteChange }) {
+function CocktailBAC({ restoreEntry, onNoteChange }) {
   const [vol, setVol] = React.useState('330');
   const [pct, setPct] = React.useState('5');
   const [wt, setWt] = React.useState('60');
   const [gender, setGender] = React.useState('female');
+
+  React.useEffect(() => {
+    if (!restoreEntry?.inputs?.mode || restoreEntry.inputs.mode !== 'bac') return;
+    const inp = restoreEntry.inputs;
+    if (inp.vol) setVol(inp.vol);
+    if (inp.pct) setPct(inp.pct);
+    if (inp.wt) setWt(inp.wt);
+    if (inp.gender) setGender(inp.gender);
+  }, [restoreEntry]);
 
   const v = parseFloat(vol) || 0;
   const p = parseFloat(pct) || 0;
