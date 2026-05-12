@@ -511,6 +511,7 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
   const [type, setType] = React.useState('volume');
   const [unit, setUnit] = React.useState('ml');
   const [addError, setAddError] = React.useState('');
+  const [editingId, setEditingId] = React.useState(null);
 
   React.useEffect(() => {
     if (!restoreEntry?.inputs?.products) return;
@@ -532,6 +533,26 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
     setTimeout(() => setSaveMsg(''), 2000);
   };
 
+  const loadProductForEdit = (product) => {
+    setName(product.name);
+    setPrice(String(product.price));
+    setQty(String(product.qty));
+    setType(product.type);
+    setUnit(product.unit);
+    setEditingId(product.id);
+    setAddError('');
+  };
+
+  const clearEdit = () => {
+    setName('');
+    setPrice('');
+    setQty('');
+    setType('volume');
+    setUnit('ml');
+    setEditingId(null);
+    setAddError('');
+  };
+
   const add = () => {
     const pr = parseFloat(price), q = parseFloat(qty);
     if (!name.trim()) { setAddError('請輸入商品名稱'); return; }
@@ -540,17 +561,35 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
     setAddError('');
     const conv = UNIT_CONV[unit] || 1;
     const standardQty = q * conv;
-    const newP = {
-      id: Date.now(), name, price: pr, qty: q, unit, type,
-      unitPrice: pr / q,
-      standardUnitPrice: pr / standardQty,
-      standardUnit: type === 'volume' ? 'ml' : type === 'weight' ? 'g' : unit,
-    };
-    const nextProducts = [...products, newP];
-    setProducts(nextProducts);
-    store.addHistory({ toolId:'price', summary: `${name} · $${pr} / ${q}${unit}`,
-      inputs: { products: nextProducts } });
-    setName(''); setPrice(''); setQty('');
+
+    if (editingId) {
+      const updatedProducts = products.map(p =>
+        p.id === editingId
+          ? {
+              ...p, name, price: pr, qty: q, unit, type,
+              unitPrice: pr / q,
+              standardUnitPrice: pr / standardQty,
+              standardUnit: type === 'volume' ? 'ml' : type === 'weight' ? 'g' : unit,
+            }
+          : p
+      );
+      setProducts(updatedProducts);
+      store.addHistory({ toolId:'price', summary: `${name} · $${pr} / ${q}${unit}`,
+        inputs: { products: updatedProducts } });
+      clearEdit();
+    } else {
+      const newP = {
+        id: Date.now(), name, price: pr, qty: q, unit, type,
+        unitPrice: pr / q,
+        standardUnitPrice: pr / standardQty,
+        standardUnit: type === 'volume' ? 'ml' : type === 'weight' ? 'g' : unit,
+      };
+      const nextProducts = [...products, newP];
+      setProducts(nextProducts);
+      store.addHistory({ toolId:'price', summary: `${name} · $${pr} / ${q}${unit}`,
+        inputs: { products: nextProducts } });
+      setName(''); setPrice(''); setQty('');
+    }
   };
 
   const grouped = ['volume','weight','package'].map(t => ({
@@ -598,7 +637,22 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
                 </select>
               </div>
             </div>
-            <button className="btn-primary" onClick={add}>新增商品</button>
+            <div style={{display:'flex', gap: 8}}>
+              <button className="btn-primary" onClick={add} style={{flex: 1}}>{editingId ? '保存修改' : '新增商品'}</button>
+              {editingId && (
+                <button onClick={clearEdit} style={{
+                  flex: 1,
+                  background:'var(--surface)',
+                  border:'1px solid var(--border)',
+                  color:'var(--text)',
+                  borderRadius:8,
+                  fontSize:14,
+                  fontWeight:500,
+                  cursor:'pointer',
+                  padding:'10px 12px'
+                }}>取消</button>
+              )}
+            </div>
             {addError && (
               <div style={{color:'var(--danger)', fontSize:12, marginTop:-4, paddingLeft:4}}>{addError}</div>
             )}
@@ -641,9 +695,12 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
                     const isBest = idx === 0 && items.length > 1;
                     const cmp = g.type === 'package' ? p.unitPrice : p.standardUnitPrice;
                     return (
-                      <div key={p.id} className={`product-row ${isBest ? 'best' : ''}`}>
+                      <div key={p.id} className={`product-row ${isBest ? 'best' : ''}`} style={{cursor: 'pointer'}} onClick={() => loadProductForEdit(p)}>
                         {isBest && <div className="crown">最划算</div>}
-                        <button className="pr-del" onClick={() => setProducts(products.filter(x => x.id !== p.id))}>
+                        <button className="pr-del" onClick={(e) => {
+                          e.stopPropagation();
+                          setProducts(products.filter(x => x.id !== p.id));
+                        }}>
                           <Glyph name="close" size={14}/>
                         </button>
                         <div className="pr-top">
