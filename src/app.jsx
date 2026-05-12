@@ -3,6 +3,7 @@ import { IOSDevice } from './ios-frame'
 import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakToggle, TweakRadio, TweakSelect } from './tweaks-panel'
 import { Splash, Home } from './home'
 import { BreadScreen, CocktailScreen, PriceScreen } from './tools'
+import { NoteDetailScreen } from './note-detail'
 import { useStore } from './history'
 import { parseShareFromUrl } from './share'
 
@@ -41,6 +42,7 @@ export default function App() {
   });
   const [prev, setPrev] = useState(null);
   const [restoreEntry, setRestoreEntry] = useState(null);
+  const [currentNote, setCurrentNote] = useState(null);
   const store = useStore();
   const standalone = isStandalone();
   const isNarrow = useIsNarrow();
@@ -72,6 +74,8 @@ export default function App() {
 
   const goto = (next, entry = null) => { setPrev(screen); setScreen(next); setRestoreEntry(entry); };
   const back = () => goto('home');
+  const gotoNoteDetail = (note) => { setPrev(screen); setScreen('note-detail'); setCurrentNote(note); };
+  const backFromNote = () => { setPrev(screen); setScreen('home'); setCurrentNote(null); };
 
   const appBody = (
     <div className="app-root">
@@ -79,7 +83,7 @@ export default function App() {
       {screen !== 'splash' && (
         <>
           <ScreenLayer active={screen === 'home'}>
-            <Home onPick={goto} layout={t.layout} store={store}/>
+            <Home onPick={goto} layout={t.layout} store={store} onViewNote={gotoNoteDetail}/>
           </ScreenLayer>
           <ScreenLayer active={screen === 'bread'}>
             {(screen === 'bread' || prev === 'bread') && <BreadScreen onBack={back} store={store} restoreEntry={screen === 'bread' ? restoreEntry : null}/>}
@@ -89,6 +93,9 @@ export default function App() {
           </ScreenLayer>
           <ScreenLayer active={screen === 'price'}>
             {(screen === 'price' || prev === 'price') && <PriceScreen onBack={back} store={store} initialShare={initialShare} restoreEntry={screen === 'price' ? restoreEntry : null}/>}
+          </ScreenLayer>
+          <ScreenLayer active={screen === 'note-detail'}>
+            {(screen === 'note-detail' || prev === 'note-detail') && <NoteDetailScreen onBack={backFromNote} note={currentNote} store={store}/>}
           </ScreenLayer>
         </>
       )}
