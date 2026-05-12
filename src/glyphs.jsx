@@ -66,5 +66,20 @@ export const Glyph = ({ size = 38, stroke = 1.4, name = 'bread', color = 'curren
       </svg>
     );
   }
+  if (name === 'edit') {
+    return (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
+        <path d="M11 4H4a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h15a1 1 0 0 0 1-1v-7" stroke={color} strokeWidth={stroke + .2} strokeLinecap="round"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L9 20H6v-3L18.5 2.5z" stroke={color} strokeWidth={stroke + .2} strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    );
+  }
+  if (name === 'check') {
+    return (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
+        <path d="M20 6L9 17l-5-5" stroke={color} strokeWidth={stroke + .2} strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    );
+  }
   return null;
 };

@@ -70,7 +70,7 @@ function ToolCard({ tool, size = 'small', extraClass = '', onPick, isFav, onTogg
   );
 }
 
-export function Home({ onPick, layout = 'mixed', store }) {
+export function Home({ onPick, layout = 'mixed', store, onViewNote }) {
   const [tab, setTab] = useState('tools');
   const [greet] = greeting();
   const { favorites, history, notes, toggleFav, removeHistory, clearHistory, removeNote, clearNotes } = store;
@@ -237,14 +237,17 @@ export function Home({ onPick, layout = 'mixed', store }) {
                 {notes.map(n => {
                   const tool = TOOLS.find(t => t.id === n.toolId);
                   return (
-                    <div key={n.id} className="history-row">
+                    <div key={n.id} className="history-row" role="button" tabIndex={0} style={{cursor:'pointer'}} onClick={() => onViewNote?.(n)}>
                       <div className="h-glyph"><Glyph name={tool ? tool.glyph : 'bread'} size={20} stroke={1.4}/></div>
                       <div className="h-meta">
                         <div className="h-tool">{tool ? tool.label : n.toolId} {n.mode ? `· ${n.mode}` : ''}</div>
                         <div className="h-sum">{n.summary}</div>
                       </div>
                       <span className="h-time">{relTime(n.ts)}</span>
-                      <button className="h-del" onClick={() => removeNote(n.id)}>
+                      <button className="h-del" onClick={(e) => {
+                        e.stopPropagation();
+                        removeNote(n.id);
+                      }}>
                         <Glyph name="close" size={12}/>
                       </button>
                     </div>
