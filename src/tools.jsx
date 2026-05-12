@@ -526,7 +526,17 @@ export function PriceScreen({ onBack, store, initialShare, restoreEntry }) {
 
   React.useEffect(() => {
     if (!restoreEntry?.inputs?.products) return;
-    setProducts(restoreEntry.inputs.products);
+    const restoredProducts = restoreEntry.inputs.products.map((p, i) => {
+      const conv = UNIT_CONV[p.unit] || 1;
+      const standardQty = p.qty * conv;
+      return {
+        id: Date.now() + i, name: p.name, price: p.price, qty: p.qty, unit: p.unit, type: p.type,
+        unitPrice: p.price / p.qty,
+        standardUnitPrice: p.price / standardQty,
+        standardUnit: p.type === 'volume' ? 'ml' : p.type === 'weight' ? 'g' : p.unit,
+      };
+    });
+    setProducts(restoredProducts);
   }, [restoreEntry]);
 
   React.useEffect(() => {
