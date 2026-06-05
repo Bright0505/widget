@@ -81,7 +81,7 @@ export function BreadScreen({ onBack, store, restoreEntry }) {
         </div>
       </div>
       <div className="tool-title-block">
-        <h1 className="tool-title">法國麵包配方</h1>
+        <h1 className="tool-title">麵包配方</h1>
         <div className="tool-sub">輸入麵粉重量，材料比例自動更新（烘焙百分比）</div>
       </div>
       <div className="tool-body">

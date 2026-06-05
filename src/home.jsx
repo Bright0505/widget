@@ -29,7 +29,7 @@ function fmtDate() {
 }
 
 export const TOOLS = [
-  { id: 'bread',    label: '法國麵包配方', en: 'French Bread',
+  { id: 'bread',    label: '麵包配方', en: 'French Bread',
     desc: 'T55 · T65 · 佛卡夏。輸入麵粉重量，自動換算。', glyph: 'bread' },
   { id: 'cocktail', label: '調酒計算',     en: 'Cocktail',
     desc: '酒精濃度與血液濃度計算。', glyph: 'cocktail' },
