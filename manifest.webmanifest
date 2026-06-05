@@ -1,7 +1,7 @@
 {
   "name": "生活小工具",
   "short_name": "小工具",
-  "description": "法國麵包配方、調酒計算、比價計算 — 日常生活的小幫手",
+  "description": "麵包配方、調酒計算、比價計算 — 日常生活的小幫手",
   "lang": "zh-TW",
   "start_url": "./index.html",
   "scope": "./",
