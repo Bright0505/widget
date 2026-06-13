@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Glyph } from './glyphs'
+import { Glyph, StarIcon } from './glyphs'
 import { relTime } from './history'
 
 export function Splash() {
@@ -36,15 +36,6 @@ export const TOOLS = [
   { id: 'price',    label: '比價計算',     en: 'Price Compare',
     desc: '不同單位、不同包裝的單價比較。', glyph: 'price' },
 ];
-
-export function StarIcon({ filled = false, size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-      <path d="M12 3l2.7 5.5 6 .9-4.4 4.3 1 6-5.3-2.8L6.7 19.7l1-6L3.3 9.4l6-.9z"/>
-    </svg>
-  );
-}
 
 function ToolCard({ tool, size = 'small', extraClass = '', onPick, isFav, onToggleFav }) {
   const isLarge = size === 'large';

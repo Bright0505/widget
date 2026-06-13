@@ -83,3 +83,12 @@ export const Glyph = ({ size = 38, stroke = 1.4, name = 'bread', color = 'curren
   }
   return null;
 };
+
+export function StarIcon({ filled = false, size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M12 3l2.7 5.5 6 .9-4.4 4.3 1 6-5.3-2.8L6.7 19.7l1-6L3.3 9.4l6-.9z"/>
+    </svg>
+  );
+}
