@@ -99,7 +99,7 @@ export default function App() {
     <div className={`stage ${!showFrame ? 'standalone' : ''}`}>
       {showFrame ? (
         <IOSDevice
-          deviceColor={t.dark ? '#1d1d1b' : '#f0ebe2'}
+          dark={t.dark}
           time={fmtTime()}
         >
           {appBody}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Glyph } from './glyphs'
-import { StarIcon } from './home'
+import { StarIcon } from './glyphs'
 import { ShareModal } from './share'
 
 const RECIPES = {
@@ -300,7 +300,14 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
       </div>
 
       <div>
-        <div className="section-h"><span className="en">Recipe</span><span className="tc">配方明細</span></div>
+        <div className="section-h">
+          <span className="en">Recipe</span><span className="tc">配方明細</span>
+          {valid && (
+            <button className="btn-share-sm" onClick={() => setShowShare(true)}>
+              <Glyph name="share" size={13}/> 分享
+            </button>
+          )}
+        </div>
         <div className="liquid-list">
           <div className="liquid-row">
             <div><div className="nm">基酒</div><div className="pct">{base}% · {valid ? Math.round(fillAlc) : 0}% 杯量</div></div>
@@ -367,11 +374,6 @@ function CocktailMixing({ initialShare, store, restoreEntry, onNoteChange }) {
 
       <div className="note-line">⚠️ 此計算器僅供參考。請勿酒駕，珍愛生命。</div>
 
-      {valid && (
-        <button className="btn-share" onClick={() => setShowShare(true)}>
-          <Glyph name="share" size={16}/> 分享配方
-        </button>
-      )}
       {showShare && (
         <ShareModal
           data={{ t: 'cocktail', m: 'mixing', target, total, base, aux }}
