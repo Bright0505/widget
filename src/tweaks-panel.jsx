@@ -107,7 +107,10 @@ export function useTweaks(defaults) {
 }
 
 export function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
-  const [open, setOpen] = React.useState(false);
+  // This module is only ever imported from app.jsx's import.meta.env.DEV branch.
+  // Outside the original embedding tool, nothing sends '__activate_edit_mode',
+  // so default straight to open in a plain `npm run dev` session.
+  const [open, setOpen] = React.useState(true);
   const dragRef = React.useRef(null);
   const hasDeckStage = React.useMemo(
     () => typeof document !== 'undefined' && !!document.querySelector('deck-stage'), [],

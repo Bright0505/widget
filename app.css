@@ -59,7 +59,7 @@ html, body {
   padding: 24px;
 }
 
-/* ===== 工作區（iPhone 旁邊的設計舞台） ===== */
+/* ===== 工作區（iPhone 旁邊的設計舞台，僅 dev 模式會用到） ===== */
 .stage {
   display: flex;
   align-items: center;
@@ -67,7 +67,7 @@ html, body {
   gap: 64px;
   flex-wrap: wrap;
 }
-/* 實際 PWA 安裝後：去掉預覽框，全螢幕填滿 */
+/* 正式站 / 實際 PWA 安裝後：去掉預覽框，全螢幕填滿 */
 .stage.standalone {
   display: block;
   position: fixed;

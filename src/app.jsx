@@ -24,8 +24,27 @@ function useIsNarrow() {
   return narrow;
 }
 
+// Real touch devices (phones/tablets, any orientation) should never get the
+// desktop-only device-frame chrome — width alone misclassifies landscape phones.
+function useIsTouchDevice() {
+  const [touch, setTouch] = useState(() => window.matchMedia
+    ? window.matchMedia('(pointer: coarse)').matches
+    : navigator.maxTouchPoints > 0);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia('(pointer: coarse)');
+    const handler = (e) => setTouch(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return touch;
+}
+
 export default function App() {
-  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  // Only reach into tweaks-panel.jsx's postMessage-enabled useTweaks in dev —
+  // production has no UI to change these, so a plain useState avoids pulling
+  // that module in at all when import.meta.env.DEV folds to false.
+  const [t, setTweak] = import.meta.env.DEV ? useTweaks(TWEAK_DEFAULTS) : useState(TWEAK_DEFAULTS);
   const [initialShare] = useState(() => {
     const share = parseShareFromUrl();
     if (share) window.history.replaceState(null, '', window.location.pathname);
@@ -44,8 +63,12 @@ export default function App() {
   const store = useStore();
   const standalone = isStandalone();
   const isNarrow = useIsNarrow();
-  // Show iOS frame only on wide-screen desktop preview, never on actual mobile
-  const showFrame = !standalone && !isNarrow;
+  const isTouch = useIsTouchDevice();
+  // Dev-only desktop preview chrome. import.meta.env.DEV is a build-time
+  // constant, so production builds fold this whole branch to `false` and
+  // Vite/Rollup tree-shakes ios-frame.jsx + tweaks-panel.jsx out entirely —
+  // real users can never see this regardless of viewport/touch detection.
+  const showFrame = import.meta.env.DEV && !standalone && !isNarrow && !isTouch;
 
   useEffect(() => {
     if (screen === 'splash') {
