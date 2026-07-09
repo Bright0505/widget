@@ -59,23 +59,14 @@ html, body {
   padding: 24px;
 }
 
-/* ===== 工作區（iPhone 旁邊的設計舞台） ===== */
+/* ===== 工作區：全螢幕填滿 ===== */
 .stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 64px;
-  flex-wrap: wrap;
-}
-/* 實際 PWA 安裝後：去掉預覽框，全螢幕填滿 */
-.stage.standalone {
   display: block;
   position: fixed;
   inset: 0;
-  gap: 0;
   background: var(--bg);
 }
-.stage.standalone > .app-root {
+.stage > .app-root {
   position: absolute;
   inset: 0;
 }
