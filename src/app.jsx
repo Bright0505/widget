@@ -24,6 +24,22 @@ function useIsNarrow() {
   return narrow;
 }
 
+// Real touch devices (phones/tablets, any orientation) should never get the
+// desktop-only device-frame chrome — width alone misclassifies landscape phones.
+function useIsTouchDevice() {
+  const [touch, setTouch] = useState(() => window.matchMedia
+    ? window.matchMedia('(pointer: coarse)').matches
+    : navigator.maxTouchPoints > 0);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia('(pointer: coarse)');
+    const handler = (e) => setTouch(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return touch;
+}
+
 export default function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [initialShare] = useState(() => {
@@ -44,8 +60,10 @@ export default function App() {
   const store = useStore();
   const standalone = isStandalone();
   const isNarrow = useIsNarrow();
+  const isTouch = useIsTouchDevice();
   // Show iOS frame only on wide-screen desktop preview, never on actual mobile
-  const showFrame = !standalone && !isNarrow;
+  // (isTouch also catches landscape phones/tablets, which can exceed the width check)
+  const showFrame = !standalone && !isNarrow && !isTouch;
 
   useEffect(() => {
     if (screen === 'splash') {
